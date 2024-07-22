@@ -14,7 +14,8 @@ jobs:
         name: repo_list
 
     - name: Read repository list
+      id: read-repos
       run: |
         REPO_LIST=$(cat repo_list.txt | tr '\n' ' ')
         echo "REPO_LIST=$REPO_LIST" >> $GITHUB_ENV
-        echo "Repository list read and set as environment variable"
+        echo "::set-output name=repo_list::$REPO_LIST"
