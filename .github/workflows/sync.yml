@@ -20,6 +20,7 @@ jobs:
     - name: Sync repositories
       env:
         REPO_LIST: ${{ env.REPO_LIST }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         for REPO in $REPO_LIST; do
           echo "Processing $REPO..."
@@ -32,5 +33,7 @@ jobs:
         done
 
     - name: Push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git push origin main
+        git push https://${{ secrets.GITHUB_TOKEN }}@github.com/yourusername/opencog-central.git main
