@@ -21,6 +21,8 @@ jobs:
   sync:
     needs: read
     uses: ./.github/workflows/sync.yml
+    with:
+      repo_list: ${{ needs.read.outputs.repo_list }}
 
   clean:
     needs: sync
