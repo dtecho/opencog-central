@@ -8,14 +8,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout central repository
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+
     - name: Sync repositories
       run: |
         for REPO in ${{ env.REPO_LIST }}; do
           echo "Processing $REPO..."
-          # Simulate cloning and processing the repository
-          echo "Cloning $REPO..."
-          echo "Creating subdirectory for $REPO..."
-          echo "Moving $REPO content..."
-          echo "Committing $REPO to subdirectory..."
-          echo "Merging $REPO branch to main..."
+          git clone https://github.com/opencog/$REPO.git $REPO
+          cd $REPO
+          git remote rm origin
+          cd ..
+          git add $REPO
+          git commit -m "Add $REPO repository as a subfolder"
         done
+
+    - name: Push changes
+      run: |
+        git push origin main
