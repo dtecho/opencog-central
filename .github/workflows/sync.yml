@@ -13,9 +13,15 @@ jobs:
       with:
         persist-credentials: false
 
-    - name: Sync repositories
+    - name: Setup git authentication
       run: |
-        for REPO in ${{ env.REPO_LIST }}; do
+        git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
+    - name: Sync repositories
+      env:
+        REPO_LIST: ${{ env.REPO_LIST }}
+      run: |
+        for REPO in $REPO_LIST; do
           echo "Processing $REPO..."
           git clone https://github.com/opencog/$REPO.git $REPO
           cd $REPO
