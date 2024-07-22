@@ -2,6 +2,10 @@ name: Sync Repositories
 
 on:
   workflow_call:
+    inputs:
+      repo_list:
+        required: true
+        type: string
 
 jobs:
   sync-repos:
@@ -11,7 +15,7 @@ jobs:
     - name: Checkout central repository
       uses: actions/checkout@v2
       with:
-        persist-credentials: false
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup git authentication
       run: |
@@ -19,7 +23,7 @@ jobs:
 
     - name: Sync repositories
       env:
-        REPO_LIST: ${{ env.REPO_LIST }}
+        REPO_LIST: ${{ inputs.repo_list }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         for REPO in $REPO_LIST; do
