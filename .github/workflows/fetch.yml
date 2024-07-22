@@ -1,0 +1,14 @@
+name: Fetch Repositories
+
+on:
+  workflow_call:
+
+jobs:
+  fetch-repos:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Fetch repository list from OpenCog organization
+      run: |
+        curl -s https://api.github.com/orgs/opencog/repos?per_page=100 | jq -r '.[].name' > repo_list.txt
+        echo "repo_list.txt created"

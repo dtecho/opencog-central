@@ -1,0 +1,15 @@
+name: Read Repositories
+
+on:
+  workflow_call:
+
+jobs:
+  read-repos:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Read repository list
+      run: |
+        REPO_LIST=$(cat repo_list.txt)
+        echo "REPO_LIST=$REPO_LIST" >> $GITHUB_ENV
+        echo "Repository list read and set as environment variable"
