@@ -40,11 +40,11 @@ jobs:
         echo "REPO_LIST in sync step: $REPO_LIST"
         for REPO in $REPO_LIST; do
           echo "Processing $REPO..."
-          git clone https://github.com/opencog/$REPO.git $REPO
-          cd $REPO
+          git clone "https://github.com/opencog/$REPO.git" "$REPO"
+          cd "$REPO"
           git remote rm origin
           cd ..
-          git add $REPO
+          git add "$REPO"
           git commit -m "Add $REPO repository as a subfolder"
         done
 
@@ -60,4 +60,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git push https://${{ secrets.GITHUB_TOKEN }}@github.com/ZoneCog/opencog-central.git main
+        git push "https://${{ secrets.GITHUB_TOKEN }}@github.com/ZoneCog/opencog-central.git" main
