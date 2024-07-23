@@ -31,7 +31,10 @@ jobs:
           git pull origin ${{ inputs.org_name }}
         else
           git checkout -b ${{ inputs.org_name }}
-        fi
+
+    - name: Clean untracked files
+      run: |
+        git clean -fdx
 
     - name: Download repo_list.txt
       uses: actions/download-artifact@v2
@@ -61,8 +64,6 @@ jobs:
             git clone "https://github.com/opencog/$REPO.git" "$REPO" &&
             if [ -d "$REPO" ] && [ "$(ls -A $REPO)" ]; then
               rm -rf "$REPO/.git"
-              cd "$REPO"
-              cd ..
               git add "$REPO"
               git commit -m "Add $REPO repository as a subfolder"
             else
