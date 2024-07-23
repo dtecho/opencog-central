@@ -21,8 +21,8 @@ jobs:
   sync:
     needs: fetch
     uses: ./.github/workflows/sync.yml
-#    with:
-#      repo_list: ${{ needs.read.outputs.repo_list }}
+    with:
+      org_name: opencog
 
   clean:
     needs: sync
