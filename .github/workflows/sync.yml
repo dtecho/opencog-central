@@ -51,12 +51,20 @@ jobs:
             continue
           fi
           echo "Processing $REPO..."
-          git clone "https://github.com/opencog/$REPO.git" "$REPO"
-          cd "$REPO"
-          git remote rm origin
-          cd ..
-          git add "$REPO"
-          git commit -m "Add $REPO repository as a subfolder"
+          {
+            git clone "https://github.com/opencog/$REPO.git" "$REPO" &&
+            if [ -d "$REPO" ] && [ "$(ls -A $REPO)" ]; then
+              rm -rf "$REPO/.git"
+              cd "$REPO"
+              cd ..
+              git add "$REPO"
+              git commit -m "Add $REPO repository as a subfolder"
+            else
+              echo "Failed to clone $REPO or $REPO is empty"
+            fi
+          } || {
+            echo "Skipping $REPO due to errors..."
+          }
         done
 
     - name: Pull latest changes
@@ -66,6 +74,12 @@ jobs:
     - name: List directories
       run: |
         ls -la
+        for REPO in $REPO_LIST; do
+          if [ -d "$REPO" ]; then
+            echo "Contents of $REPO:"
+            ls -la "$REPO"
+          fi
+        done
 
     - name: Push changes
       env:
