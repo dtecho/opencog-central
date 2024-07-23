@@ -31,6 +31,7 @@ jobs:
           git pull origin ${{ inputs.org_name }}
         else
           git checkout -b ${{ inputs.org_name }}
+        fi
 
     - name: Clean untracked files
       run: |
