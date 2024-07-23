@@ -23,9 +23,15 @@ jobs:
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-    - name: Create new branch
+    - name: Create or switch to branch
       run: |
-        git checkout -b ${{ inputs.org_name }}
+        if git ls-remote --exit-code --heads origin ${{ inputs.org_name }}; then
+          git fetch origin ${{ inputs.org_name }}:${{ inputs.org_name }}
+          git checkout ${{ inputs.org_name }}
+          git pull origin ${{ inputs.org_name }}
+        else
+          git checkout -b ${{ inputs.org_name }}
+        fi
 
     - name: Download repo_list.txt
       uses: actions/download-artifact@v2
@@ -66,10 +72,6 @@ jobs:
             echo "Skipping $REPO due to errors..."
           }
         done
-
-    - name: Pull latest changes
-      run: |
-        git pull origin main --rebase
 
     - name: List directories
       run: |
