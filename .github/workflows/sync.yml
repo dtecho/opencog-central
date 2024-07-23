@@ -33,9 +33,6 @@ jobs:
         echo "REPO_LIST: $REPO_LIST"
 
     - name: Sync repositories
-      env:
-        REPO_LIST: $REPO_LIST
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "REPO_LIST in sync step: $REPO_LIST"
         for REPO in $REPO_LIST; do
