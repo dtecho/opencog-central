@@ -18,5 +18,5 @@ jobs:
       run: |
         REPO_LIST=$(cat repo_list.txt | tr '\n' ' ')
         echo "REPO_LIST=$REPO_LIST" >> $GITHUB_ENV
-        echo "repo_list=$REPO_LIST" >> $GITHUB_ENV
+        echo "repo_list=$REPO_LIST" >> $GITHUB_OUTPUT
         echo "Repository list: $REPO_LIST"
