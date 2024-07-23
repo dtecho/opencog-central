@@ -21,6 +21,9 @@ jobs:
       run: |
         git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
+    - name: Print REPO_LIST
+      run: echo "REPO_LIST: ${{ inputs.repo_list }}"
+
     - name: Sync repositories
       env:
         REPO_LIST: ${{ inputs.repo_list }}
@@ -35,6 +38,9 @@ jobs:
           git add $REPO
           git commit -m "Add $REPO repository as a subfolder"
         done
+
+    - name: List directories
+      run: ls -la
 
     - name: Push changes
       env:
