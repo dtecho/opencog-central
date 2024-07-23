@@ -19,10 +19,10 @@ jobs:
     uses: ./.github/workflows/read.yml
 
   sync:
-    needs: read
+    needs: fetch
     uses: ./.github/workflows/sync.yml
-    with:
-      repo_list: ${{ needs.read.outputs.repo_list }}
+#    with:
+#      repo_list: ${{ needs.read.outputs.repo_list }}
 
   clean:
     needs: sync
