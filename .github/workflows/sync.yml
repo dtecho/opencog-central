@@ -30,6 +30,7 @@ jobs:
         REPO_LIST: ${{ inputs.repo_list }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        echo "REPO_LIST in sync step: $REPO_LIST"
         for REPO in $REPO_LIST; do
           echo "Processing $REPO..."
           git clone https://github.com/opencog/$REPO.git $REPO
