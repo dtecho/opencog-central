@@ -39,6 +39,10 @@ jobs:
           git commit -m "Add $REPO repository as a subfolder"
         done
 
+    - name: Pull latest changes
+      run: |
+        git pull origin main --rebase
+
     - name: List directories
       run: ls -la
 
