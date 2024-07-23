@@ -13,9 +13,11 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Setup git authentication
+    - name: Setup git authentication and user
       run: |
         git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
     - name: Download repo_list.txt
       uses: actions/download-artifact@v2
