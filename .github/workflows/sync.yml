@@ -2,10 +2,6 @@ name: Sync Repositories
 
 on:
   workflow_call:
-    inputs:
-      repo_list:
-        required: true
-        type: string
 
 jobs:
   sync-repos:
@@ -21,13 +17,24 @@ jobs:
       run: |
         git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
+    - name: Download repo_list.txt
+      uses: actions/download-artifact@v2
+      with:
+        name: repo_list
+
+    - name: Read repository list
+      run: |
+        REPO_LIST=$(cat repo_list.txt | tr '\n' ' ')
+        echo "REPO_LIST=$REPO_LIST" >> $GITHUB_ENV
+        echo "Repository list: $REPO_LIST"
+
     - name: Print REPO_LIST
       run: |
-        echo "REPO_LIST: ${{ inputs.repo_list }}"
+        echo "REPO_LIST: $REPO_LIST"
 
     - name: Sync repositories
       env:
-        REPO_LIST: ${{ inputs.repo_list }}
+        REPO_LIST: $REPO_LIST
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "REPO_LIST in sync step: $REPO_LIST"
