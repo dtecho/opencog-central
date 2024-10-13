@@ -1,0 +1,6 @@
+tensorflow
+numpy
+prolog
+rust
+c
+
