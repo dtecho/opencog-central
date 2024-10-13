@@ -1,2 +1,2 @@
-# .github
-Intended to hold the public profile README
+# opencog-devcontainer
+ A VS Code devcontainer setup for OpenCog.
