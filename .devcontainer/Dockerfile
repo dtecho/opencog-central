@@ -1,12 +1,10 @@
-FROM opencog/redux-os:latest
+FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update && \
 apt install -y python3-pip python3-tk && \
-pip3 install -r requirements.txt && \
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+curl https://sh.rustup.rs -sSf | sh -s -- -y && \
 apt install -y swi-prolog && \
 apt install -y gcc
-
 

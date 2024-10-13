@@ -1,5 +1,5 @@
 {
-    "name": "Redux OS",
+    "name": "Redox OS Machine Learning Integration Environment",
     "build": {
         "dockerfile": "Dockerfile"
     },
@@ -8,17 +8,10 @@
         "vscode": {
             "settings": {},
             "extensions": [
-                "ms-python.python",
-                "matklad.rust-analyzer",
-                "arthurwang.vsc-prolog",
-                "ms-vscode.cpptools"
+                "ms-python.python"
             ]
         }
     },
-    "runArgs": [
-        "--gpus=all"
-    ],
-    "postCreateCommand": "pip3 install -r requirements.txt"
+    "postCreateCommand": "pip3 install -r requirements.txt && cargo install hyperon"
 }
-
 
