@@ -1,48 +1,30 @@
-import tensorflow as tf
 import numpy as np
-import prolog
-import rust
-import c
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 
-# create data
-x_data = np.random.rand(100).astype(np.float32)
-y_data = x_data * 0.1 + 0.3
+# loading the iris dataset
+iris_dataset = load_iris()
 
-# create tensorflow structure start
-Weights = tf.Variable(tf.random.uniform([1], -1.0, 1.0))
-biases = tf.Variable(tf.zeros([1]))
+# creating a dataframe from the dataset
+df = pd.DataFrame(iris_dataset.data, columns=iris_dataset.feature_names)
 
-def model(x):
-    return Weights * x + biases
+# adding the target column
+df['target'] = iris_dataset.target
 
-def loss(y_true, y_pred):
-    return tf.reduce_mean(tf.square(y_true - y_pred))
+# splitting the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(df[iris_dataset.feature_names], df['target'], random_state=0)
 
-optimizer = tf.keras.optimizers.SGD(learning_rate=0.5)
+# creating the model
+knn = KNeighborsClassifier(n_neighbors=1)
 
-# Training function using GradientTape
-@tf.function
-def train_step(x_data, y_data):
-    with tf.GradientTape() as tape:
-        y_pred = model(x_data)
-        current_loss = loss(y_data, y_pred)
-        gradients = tape.gradient(current_loss, [Weights, biases])
-        optimizer.apply_gradients(zip(gradients, [Weights, biases]))
-        return current_loss
+# fitting the model
+knn.fit(X_train, y_train)
 
-# create tensorflow structure end
+# making predictions
+y_pred = knn.predict(X_test)
 
-# Train the model
-batch_size = 32
-num_epochs = 201
-
-for step in range(num_epochs):
-    total_loss = 0
-    for batch_start in range(0, len(x_data), batch_size):
-        batch_x = x_data[batch_start:batch_start + batch_size]
-        batch_y = y_data[batch_start:batch_start + batch_size]
-        current_loss = train_step(batch_x, batch_y)
-        total_loss += current_loss
-        if step % 20 == 0:
-            print(step, Weights.numpy(), biases.numpy(), total_loss.numpy())
+# evaluating the model
+print("Test set score: {:.2f}".format(np.mean(y_pred == y_test)))
 

@@ -1,31 +1,43 @@
 
 
-# Redux OS Machine Learning Integration Environment
 
-This repository contains the necessary files to set up a machine learning integration environment using Redux OS for the development of an AGI OS with OpenCog Hyperon. The environment supports various programming languages such as Python, Rust, Prolog, and C.
+# Redox OS Machine Learning Integration Environment
 
-## Setup
+This repository contains the necessary files to set up a development environment for the integration of machine learning into Redox OS using Python, Rust, Prolog, and C. This environment is specifically designed for the development of OpenCog Hyperon.
 
-To set up the environment, follow these steps:
+## Set up
 
-1. Clone this repository onto your local machine.
-2. Install Docker if you do not already have it installed.
-3. Open the `devcontainer.json` file located in the `.devcontainer` folder.
-4. Configure any specific properties for VS Code, such as settings and extensions.
-5. Run the `postCreateCommand` to install the necessary requirements for the environment.
-6. Build the Docker image using the `Dockerfile` located in the `.devcontainer` folder.
+To set up the environment, run the following command in the terminal:
 
-## Running the App
+```
+pip3 install -r requirements.txt && cargo install hyperon
+```
 
-To run the app, follow these steps:
+This will install all the necessary dependencies and packages for the environment.
 
-1. Open the `app.py` file located in the root directory.
-2. Make sure you have the necessary programming languages and libraries installed.
-3. Run the file using the `launch.json` configuration located in the `.vscode` folder.
+## Get started
 
-## Additional Notes
+To start the development environment, run the following command in the terminal:
 
-- The `requirements.txt` file contains the necessary libraries for the app to run.
-- The `launch.json` file is configured to run the `app.py` file using the Python interpreter.
-- The `Dockerfile` installs the necessary programming languages and libraries for the environment.
-- The `devcontainer.json` file allows for customization of the VS Code environment within the Docker container.
+```
+python3 app.py
+```
+
+This will run the sample code provided in `app.py` and allow you to start developing and testing your own code.
+
+## Additional files
+
+This repository also includes the following files:
+
+- `requirements.txt`: contains a list of required Python packages for the environment
+- `.vscode/launch.json`: contains configuration settings for debugging in Visual Studio Code
+- `Cargo.toml`: contains configuration settings for the Rust package manager
+- `src/main.rs`: contains a sample Rust code for the Hyperon library
+- `src/lib.rs`: contains a sample Rust code for the Hyperon library
+- `src/test.rs`: contains a sample Rust code for testing the Hyperon library
+
+Feel free to modify these files as needed for your development process.
+
+## License
+
+This repository is licensed under the MIT License. See the `LICENSE` file for more information.

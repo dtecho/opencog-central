@@ -1,6 +1,5 @@
-tensorflow
 numpy
-prolog
-rust
-c
+pandas
+scikit-learn
+matplotlib
 
