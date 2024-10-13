@@ -21,10 +21,11 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install dependencies and run generation script
-        run: |
-          npm install fs-extra
-          node .github/scripts/generate_cargo_toml.js
+      - name: Install fs-extra globally
+        run: npm install -g fs-extra
+
+      - name: Run the Cargo.toml generation script
+        run: node .github/scripts/generate_cargo_toml.js
 
       - name: Configure Git
         run: |
