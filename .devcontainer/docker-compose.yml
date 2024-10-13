@@ -1,42 +1,45 @@
---- #-------------------------------------------------------------------------------------------------------------
-
-#-------------------------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
+# Usage: Follow the steps in the README file in the directory containing this file
 version: "3"
 services:
-  workspace:
-    # Update this to the name of the service you want to work with in your docker-compose.yml file:
-    # You may want to add a non-root user to your Dockerfile and uncomment the line below
-    # to cause all processes to run as this user. Once present, you can also simply
-    # use the "remoteUser" property in devcontainer.json if you just want VS Code and
-    # its sub-processes (terminals, tasks, debugging) to execute as the user. On Linux,
-    # you may need to ensure the UID and GID of the container user you create matches your
-    # local user. See https://aka.ms/vscode-remote/containers/non-root for details.
-    # user: vscode
+    workspace:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "5000:5000"
+            - "17001:17001"
+            - "18001:18001"
+            - "8888:8888"
+        volumes:
+            - $OPENCOG_SOURCE_DIR:/opencog
+            - $HOME/.gitconfig:/home/opencog/.gitconfig # for git commits,stash ...
+            - ~/.ccache:/home/opencog/.ccache # for persisting ccache artifacts
+            - $ATOMSPACE_SOURCE_DIR:/atomspace
+            - $COGUTIL_SOURCE_DIR:/cogutil
+            - $OPENCOG_NOTEBOOKS_DIR:/opencog/notebooks
+            # Uncomment the following lines if you want to work on moses
+            # - $MOSES_SOURCE_DIR:/moses
+        environment:
+            - OPENCOG_SOURCE_DIR=/opencog
+            - CCACHE_DIR=/home/opencog/.ccache
+            - PGHOST=db # This should be the same as the link's alias
+            - PGUSER=opencog_user # user created by configure-database.sh
+            - TZ=$TZ # set this to your timezone
+            - ATOMSPACE_SOURCE_DIR=/atomspace
+            - COGUTIL_SOURCE_DIR=/cogutil
+        links:
+            - postgres:db
+            - relex:relex
 
-    # Uncomment if you want to add a different Dockerfile in the .devcontainer folder
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    postgres:
+        image: singularitynet/postgres
+        # Uncomment the following lines if you want to work on a production
+        # system.
+        # NOTE: The environment variable `PROD` is set `True` then the entrypoint
+        # script in opencog/postgres does additional configurations.
+        # environment:
+        #     - PROD=True
 
-    # Uncomment if you want to expose any additional ports. The snippet below exposes port 3000.
-    # ports:
-    #   - 3000:3000
-
-    volumes:
-      # Update this to wherever you want VS Code to mount the folder of your project
-      - .:/workspace:cached
-
-      # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-in-docker-compose for details.
-      # - /var/run/docker.sock:/var/run/docker.sock
-
-    # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
-    # cap_add:
-    #   - SYS_PTRACE
-    # security_opt:
-    #   - seccomp:unconfined
-
-    # Overrides default command so things don't shut down after the process ends.
-    working_dir: /workspace
-    command: /bin/sh -c "while sleep 1000; do :; done"
+    relex:
+        image: singularitynet/relex
+        command: /bin/sh -c "./opencog-server.sh"
