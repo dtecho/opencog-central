@@ -1,0 +1,15 @@
+{
+  "name": "Redox OS Development",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "rust-lang.rust-analyzer"
+  ],
+  "postCreateCommand": "cd /redox && make all",
+  "remoteUser": "root"
+}
