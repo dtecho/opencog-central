@@ -256,8 +256,6 @@ jobs:
           name: cogserver
           path: cogserver/build/
 
-  # Define other jobs similarly: attention, unify, ure, miner, asmoses, opencog
-
   attention:
     name: Attention Job
     runs-on: ubuntu-latest
@@ -422,9 +420,259 @@ jobs:
           name: unify
           path: unify/build/
 
-  # Continue similarly for ure, miner, asmoses, opencog
+  ure:
+    name: URE Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
 
-  # Example for opencog:
+    needs:
+      - atomspace
+      - unify
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Unify Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: unify
+          path: /ws/unify
+
+      - name: Download AtomSpace Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: atomspace
+          path: /ws/atomspace
+
+      - name: Download CogUtil Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogutil
+          path: /ws/cogutil
+
+      - name: Setup ccache Cache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-ure-${{ runner.os }}-${{ hashFiles('ure/**') }}
+          restore-keys: |
+            ccache-ure-
+
+      - name: Set MAKEFLAGS
+        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
+
+      - name: Configure CMake for URE
+        run: |
+          mkdir -p ure/build
+          cd ure/build
+          cmake ..
+
+      - name: Build URE
+        run: |
+          cd ure/build
+          make
+
+      - name: Install URE
+        run: |
+          cd ure/build
+          sudo make install
+          sudo ldconfig
+
+      - name: Build URE Tests
+        run: |
+          cd ure/build
+          make tests
+
+      - name: Run URE Tests
+        run: |
+          cd ure/build
+          make check ARGS="$MAKEFLAGS"
+
+      - name: Print URE Test Log
+        if: always()
+        run: |
+          cat ure/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
+
+      - name: Upload URE Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ure
+          path: ure/build/
+
+  miner:
+    name: Miner Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
+
+    needs: ure
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download URE Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ure
+          path: /ws/ure
+
+      - name: Download AtomSpace Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: atomspace
+          path: /ws/atomspace
+
+      - name: Download CogUtil Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogutil
+          path: /ws/cogutil
+
+      - name: Setup ccache Cache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-miner-${{ runner.os }}-${{ hashFiles('miner/**') }}
+          restore-keys: |
+            ccache-miner-
+
+      - name: Set MAKEFLAGS
+        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
+
+      - name: Configure CMake for Miner
+        run: |
+          mkdir -p miner/build
+          cd miner/build
+          cmake ..
+
+      - name: Build Miner
+        run: |
+          cd miner/build
+          make
+
+      - name: Install Miner
+        run: |
+          cd miner/build
+          sudo make install
+          sudo ldconfig
+
+      - name: Build Miner Tests
+        run: |
+          cd miner/build
+          make tests
+
+      - name: Run Miner Tests
+        run: |
+          cd miner/build
+          make check ARGS="$MAKEFLAGS"
+
+      - name: Print Miner Test Log
+        if: always()
+        run: |
+          cat miner/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
+
+      - name: Upload Miner Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: miner
+          path: miner/build/
+
+  asmoses:
+    name: ASMoses Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
+
+    needs: miner
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Miner Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: miner
+          path: /ws/miner
+
+      - name: Download URE Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ure
+          path: /ws/ure
+
+      - name: Download AtomSpace Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: atomspace
+          path: /ws/atomspace
+
+      - name: Download CogUtil Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogutil
+          path: /ws/cogutil
+
+      - name: Setup ccache Cache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-asmoses-${{ runner.os }}-${{ hashFiles('asmoses/**') }}
+          restore-keys: |
+            ccache-asmoses-
+
+      - name: Set MAKEFLAGS
+        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
+
+      - name: Configure CMake for ASMoses
+        run: |
+          mkdir -p asmoses/build
+          cd asmoses/build
+          cmake ..
+
+      - name: Build ASMoses
+        run: |
+          cd asmoses/build
+          make
+
+      - name: Install ASMoses
+        run: |
+          cd asmoses/build
+          sudo make install
+          sudo ldconfig
+
+      - name: Build ASMoses Tests
+        run: |
+          cd asmoses/build
+          make tests
+
+      - name: Run ASMoses Tests
+        run: |
+          cd asmoses/build
+          make check ARGS="$MAKEFLAGS"
+
+      - name: Print ASMoses Test Log
+        if: always()
+        run: |
+          cat asmoses/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
+
+      - name: Upload ASMoses Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: asmoses
+          path: asmoses/build/
 
   opencog:
     name: OpenCog Job
@@ -435,10 +683,149 @@ jobs:
       env:
         CCACHE_DIR: /ws/ccache
 
-#    needs: asmoses
+    needs: asmoses
 
-#    steps:
-#      - name: Checkout Repository
-#        uses: actions/checkout@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-#      - name: Download ASMoses Artifact
+      - name: Download ASMoses Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: asmoses
+          path: /ws/asmoses
+
+      - name: Download Miner Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: miner
+          path: /ws/miner
+
+      - name: Download URE Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ure
+          path: /ws/ure
+
+      - name: Download AtomSpace Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: atomspace
+          path: /ws/atomspace
+
+      - name: Download CogUtil Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogutil
+          path: /ws/cogutil
+
+      - name: Setup ccache Cache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-opencog-${{ runner.os }}-${{ hashFiles('opencog/**') }}
+          restore-keys: |
+            ccache-opencog-
+
+      - name: Set MAKEFLAGS
+        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
+
+      - name: Install Link Grammar Atomese
+        run: |
+          git clone --depth 1 https://github.com/opencog/lg-atomese /ws/lg-atomese
+          mkdir -p /ws/lg-atomese/build
+          cd /ws/lg-atomese/build
+          cmake ..
+          make -j2
+          sudo make install
+          sudo ldconfig
+
+      - name: Clone OpenCog Repository
+        run: |
+          git clone --depth 1 https://github.com/opencog/opencog.git /ws/opencog
+
+      - name: Configure CMake for OpenCog
+        run: |
+          mkdir -p opencog/build
+          cd opencog/build
+          cmake ..
+
+      - name: Build OpenCog
+        run: |
+          cd opencog/build
+          make
+
+      - name: Install OpenCog
+        run: |
+          cd opencog/build
+          sudo make install
+          sudo ldconfig
+
+      - name: Build OpenCog Tests
+        run: |
+          cd opencog/build
+          make tests
+
+      - name: Run OpenCog Tests
+        run: |
+          cd opencog/build
+          make check ARGS="$MAKEFLAGS"
+
+      - name: Print OpenCog Test Log
+        if: always()
+        run: |
+          cat opencog/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
+
+      - name: Upload OpenCog Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: opencog
+          path: opencog/build/
+
+  package:
+    name: Package Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
+
+    needs: opencog
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download OpenCog Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: opencog
+          path: /ws/opencog
+
+      - name: Download ccache Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ccache
+          path: /ws/ccache
+
+      - name: Build Debian Package
+        run: |
+          cd /ws/opencog/build
+          make install
+          make package || echo "Package target not defined."
+
+      - name: Upload Debian Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-packages
+          path: /ws/opencog/build/packages/ || echo "No packages to upload."
+
+      - name: Save ccache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-package-${{ runner.os }}-${{ hashFiles('**/package/**') }}
+          restore-keys: |
+            ccache-package-
