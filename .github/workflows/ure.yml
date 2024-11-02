@@ -1,20 +1,18 @@
-# .github/workflows/reusable/ure.yml
+# .github/workflows/ure.yml
 
-name: Reusable URE Workflow
+name: URE Build and Test
 
 on:
-  workflow_call:
-    inputs:
-      branch:
-        required: true
-        type: string
-    secrets:
-      GITHUB_TOKEN:
-        required: true
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  ure_job:
-    name: URE Build and Test
+  build-and-test:
+    name: Build and Test URE
     runs-on: ubuntu-latest
     container:
       image: opencog/opencog-deps
@@ -23,26 +21,19 @@ jobs:
       CCACHE_DIR: /ws/ccache
       MAKEFLAGS: -j2
     steps:
-      - name: Checkout Repository
+      - name: Checkout URE Repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.branch }}
 
-      - name: Start restoring ccache
-        run: date +%d-%m-%Y > /tmp/date
-
-      - name: Restore ccache
+      - name: Set up Ccache
         uses: actions/cache@v4
         with:
           path: /ws/ccache
-          key: ccache-${{ hashFiles('/tmp/date') }}
+          key: ccache-ure-${{ runner.os }}-${{ hashFiles('**/*.cpp', '**/*.h') }}
           restore-keys: |
-            ccache-
+            ccache-ure-${{ runner.os }}-
+            ccache-ure-
 
-      - name: Set number of make jobs
-        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
-
-      - name: CMake Configure
+      - name: Configure Build
         run: |
           mkdir -p build
           cd build
@@ -53,29 +44,18 @@ jobs:
           cd build
           make
 
-      - name: Build tests
+      - name: Build Tests
         run: |
           cd build
           make tests
 
-      - name: Run tests
+      - name: Run Tests
         run: |
           cd build
           make check ARGS="$MAKEFLAGS"
 
-      - name: Print test log
-        if: always()
-        run: |
-          cat build/tests/Testing/Temporary/LastTest.log
-
-      - name: Upload ure artifact
+      - name: Upload URE Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ure
-          path: /ws/ure
-
-      - name: Upload ccache artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ccache
-          path: /ws/ccache
+          path: build/
