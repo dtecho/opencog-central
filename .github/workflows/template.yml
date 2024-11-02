@@ -1,6 +1,6 @@
-# .github/workflows/reusable/cogutil.yml
+# .github/workflows/reusable/template.yml
 
-name: Reusable CogUtil Workflow
+name: Reusable <Package Name> Workflow
 
 on:
   workflow_call:
@@ -13,15 +13,15 @@ on:
         required: true
 
 jobs:
-  cogutil_job:
-    name: CogUtil Build and Test
+  <package_job_id>:
+    name: <Package Name> Job
     runs-on: ubuntu-latest
     container:
       image: opencog/opencog-deps
       options: --user root
     env:
       CCACHE_DIR: /ws/ccache
-      MAKEFLAGS: -j2
+      MAKEFLAGS: ${{ env.MAKEFLAGS }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
 
       - name: CMake Configure
         run: |
-          mkdir -p build
+          mkdir build
           cd build
           cmake ..
 
@@ -68,14 +68,8 @@ jobs:
         run: |
           cat build/tests/Testing/Temporary/LastTest.log
 
-      - name: Upload cogutil artifact
+      - name: Upload <package_name> artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cogutil
-          path: /ws/cogutil
-
-      - name: Upload ccache artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ccache
-          path: /ws/ccache
+          name: <package_name>
+          path: /ws/<package_name>

@@ -1,6 +1,6 @@
-# .github/workflows/reusable/cogutil.yml
+# .github/workflows/reusable/unify.yml
 
-name: Reusable CogUtil Workflow
+name: Reusable Unify Workflow
 
 on:
   workflow_call:
@@ -13,8 +13,8 @@ on:
         required: true
 
 jobs:
-  cogutil_job:
-    name: CogUtil Build and Test
+  unify_job:
+    name: Unify Build and Test
     runs-on: ubuntu-latest
     container:
       image: opencog/opencog-deps
@@ -68,11 +68,11 @@ jobs:
         run: |
           cat build/tests/Testing/Temporary/LastTest.log
 
-      - name: Upload cogutil artifact
+      - name: Upload unify artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cogutil
-          path: /ws/cogutil
+          name: unify
+          path: /ws/unify
 
       - name: Upload ccache artifact
         uses: actions/upload-artifact@v4

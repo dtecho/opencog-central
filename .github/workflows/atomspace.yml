@@ -1,6 +1,6 @@
-# .github/workflows/reusable/cogutil.yml
+# .github/workflows/reusable/atomspace.yml
 
-name: Reusable CogUtil Workflow
+name: Reusable AtomSpace Workflow
 
 on:
   workflow_call:
@@ -13,13 +13,30 @@ on:
         required: true
 
 jobs:
-  cogutil_job:
-    name: CogUtil Build and Test
+  atomspace_job:
+    name: AtomSpace Job
     runs-on: ubuntu-latest
     container:
       image: opencog/opencog-deps
       options: --user root
+    services:
+      postgres:
+        image: opencog/postgres
+        env:
+          POSTGRES_DB: atomspace
+          POSTGRES_USER: opencog_test
+          POSTGRES_PASSWORD: cheese
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U opencog_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     env:
+      PGHOST: localhost
+      PGUSER: opencog_test
+      PGPASSWORD: cheese
       CCACHE_DIR: /ws/ccache
       MAKEFLAGS: -j2
     steps:
@@ -44,7 +61,7 @@ jobs:
 
       - name: CMake Configure
         run: |
-          mkdir -p build
+          mkdir build
           cd build
           cmake ..
 
@@ -68,11 +85,11 @@ jobs:
         run: |
           cat build/tests/Testing/Temporary/LastTest.log
 
-      - name: Upload cogutil artifact
+      - name: Upload atomspace artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cogutil
-          path: /ws/cogutil
+          name: atomspace
+          path: /ws/atomspace
 
       - name: Upload ccache artifact
         uses: actions/upload-artifact@v4
