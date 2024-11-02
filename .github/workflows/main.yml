@@ -24,7 +24,7 @@ jobs:
 
   atomspace:
     needs: cogutil
-    uses: ./.github/workflows/reusable/atomspace.yml
+    uses: ./.github/workflows/atomspace.yml
     with:
       branch: main
     secrets:
@@ -32,7 +32,7 @@ jobs:
 
   cogserver:
     needs: atomspace
-    uses: ./.github/workflows/reusable/cogserver.yml
+    uses: ./.github/workflows/cogserver.yml
     with:
       branch: main
     secrets:
@@ -40,7 +40,7 @@ jobs:
 
   opencog:
     needs: cogserver
-    uses: ./.github/workflows/reusable/opencog.yml
+    uses: ./.github/workflows/opencog.yml
     with:
       branch: main
     secrets:
@@ -48,7 +48,7 @@ jobs:
 
   asmoses:
     needs: opencog
-    uses: ./.github/workflows/reusable/asmoses.yml
+    uses: ./.github/workflows/asmoses.yml
     with:
       branch: main
     secrets:
@@ -56,7 +56,7 @@ jobs:
 
   ure:
     needs: asmoses
-    uses: ./.github/workflows/reusable/ure.yml
+    uses: ./.github/workflows/ure.yml
     with:
       branch: main
     secrets:
@@ -64,7 +64,7 @@ jobs:
 
   unify:
     needs: ure
-    uses: ./.github/workflows/reusable/unify.yml
+    uses: ./.github/workflows/unify.yml
     with:
       branch: main
     secrets:
@@ -73,7 +73,7 @@ jobs:
   package:
     needs: unify
     if: github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/reusable/package.yml
+    uses: ./.github/workflows/package.yml
     with:
       branch: main
     secrets:
