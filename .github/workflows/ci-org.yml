@@ -1,0 +1,444 @@
+# .github/workflows/ci-org.yml
+
+name: CI Org
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  CCACHE_DIR: /ws/ccache
+  MAKEFLAGS: -j2
+
+jobs:
+  cogutil:
+    name: CogUtil Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup ccache Cache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-cogutil-${{ runner.os }}-${{ hashFiles('cogutil/**') }}
+          restore-keys: |
+            ccache-cogutil-
+
+      - name: Set MAKEFLAGS
+        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
+
+      - name: Configure CMake for CogUtil
+        run: |
+          mkdir -p cogutil/build
+          cd cogutil/build
+          cmake ..
+
+      - name: Build CogUtil
+        run: |
+          cd cogutil/build
+          make
+
+      - name: Install CogUtil
+        run: |
+          cd cogutil/build
+          sudo make install
+          sudo ldconfig
+
+      - name: Build CogUtil Tests
+        run: |
+          cd cogutil/build
+          make tests
+
+      - name: Run CogUtil Tests
+        run: |
+          cd cogutil/build
+          make check ARGS="$MAKEFLAGS"
+
+      - name: Print CogUtil Test Log
+        if: always()
+        run: |
+          cat cogutil/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
+
+      - name: Upload CogUtil Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cogutil
+          path: cogutil/build/
+
+  atomspace:
+    name: AtomSpace Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        PGHOST: opencog-postgres
+        PGUSER: opencog_test
+        PGPASSWORD: cheese
+        CCACHE_DIR: /ws/ccache
+
+    needs: cogutil
+
+    services:
+      opencog-postgres:
+        image: opencog/postgres
+        env:
+          POSTGRES_USER: opencog_test
+          POSTGRES_PASSWORD: cheese
+          POSTGRES_DB: atomspace_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download CogUtil Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogutil
+          path: /ws/cogutil
+
+      - name: Setup ccache Cache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-atomspace-${{ runner.os }}-${{ hashFiles('atomspace/**') }}
+          restore-keys: |
+            ccache-atomspace-
+
+      - name: Set MAKEFLAGS
+        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
+
+      - name: Configure CMake for AtomSpace
+        run: |
+          mkdir -p atomspace/build
+          cd atomspace/build
+          cmake ..
+
+      - name: Build AtomSpace
+        run: |
+          cd atomspace/build
+          make
+
+      - name: Install AtomSpace
+        run: |
+          cd atomspace/build
+          sudo make install
+          sudo ldconfig
+
+      - name: Build AtomSpace Tests
+        run: |
+          cd atomspace/build
+          make tests
+
+      - name: Run AtomSpace Tests
+        run: |
+          cd atomspace/build
+          make check ARGS="$MAKEFLAGS"
+
+      - name: Print AtomSpace Test Log
+        if: always()
+        run: |
+          cat atomspace/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
+
+      - name: Upload AtomSpace Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomspace
+          path: atomspace/build/
+
+  cogserver:
+    name: CogServer Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
+
+    needs: atomspace
+
+    services:
+      opencog-postgres:
+        image: opencog/postgres
+        env:
+          POSTGRES_USER: opencog_test
+          POSTGRES_PASSWORD: cheese
+          POSTGRES_DB: cogserver_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download AtomSpace Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: atomspace
+          path: /ws/atomspace
+
+      - name: Download CogUtil Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogutil
+          path: /ws/cogutil
+
+      - name: Setup ccache Cache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-cogserver-${{ runner.os }}-${{ hashFiles('cogserver/**') }}
+          restore-keys: |
+            ccache-cogserver-
+
+      - name: Set MAKEFLAGS
+        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
+
+      - name: Configure CMake for CogServer
+        run: |
+          mkdir -p cogserver/build
+          cd cogserver/build
+          cmake ..
+
+      - name: Build CogServer
+        run: |
+          cd cogserver/build
+          make
+
+      - name: Install CogServer
+        run: |
+          cd cogserver/build
+          sudo make install
+          sudo ldconfig
+
+      - name: Build CogServer Tests
+        run: |
+          cd cogserver/build
+          make tests
+
+      - name: Run CogServer Tests
+        run: |
+          cd cogserver/build
+          make check ARGS="$MAKEFLAGS"
+
+      - name: Print CogServer Test Log
+        if: always()
+        run: |
+          cat cogserver/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
+
+      - name: Upload CogServer Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cogserver
+          path: cogserver/build/
+
+  # Define other jobs similarly: attention, unify, ure, miner, asmoses, opencog
+
+  attention:
+    name: Attention Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
+
+    needs: cogserver
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download CogServer Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogserver
+          path: /ws/cogserver
+
+      - name: Download AtomSpace Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: atomspace
+          path: /ws/atomspace
+
+      - name: Download CogUtil Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogutil
+          path: /ws/cogutil
+
+      - name: Setup ccache Cache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-attention-${{ runner.os }}-${{ hashFiles('attention/**') }}
+          restore-keys: |
+            ccache-attention-
+
+      - name: Set MAKEFLAGS
+        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
+
+      - name: Configure CMake for Attention
+        run: |
+          mkdir -p attention/build
+          cd attention/build
+          cmake ..
+
+      - name: Build Attention
+        run: |
+          cd attention/build
+          make
+
+      - name: Install Attention
+        run: |
+          cd attention/build
+          sudo make install
+          sudo ldconfig
+
+      - name: Build Attention Tests
+        run: |
+          cd attention/build
+          make tests
+
+      - name: Run Attention Tests
+        run: |
+          cd attention/build
+          make check ARGS="$MAKEFLAGS"
+
+      - name: Print Attention Test Log
+        if: always()
+        run: |
+          cat attention/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
+
+      - name: Upload Attention Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: attention
+          path: attention/build/
+
+  unify:
+    name: Unify Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
+
+    needs: atomspace
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download AtomSpace Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: atomspace
+          path: /ws/atomspace
+
+      - name: Download CogServer Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogserver
+          path: /ws/cogserver
+
+      - name: Download CogUtil Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cogutil
+          path: /ws/cogutil
+
+      - name: Setup ccache Cache
+        uses: actions/cache@v4
+        with:
+          path: /ws/ccache
+          key: ccache-unify-${{ runner.os }}-${{ hashFiles('unify/**') }}
+          restore-keys: |
+            ccache-unify-
+
+      - name: Set MAKEFLAGS
+        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
+
+      - name: Configure CMake for Unify
+        run: |
+          mkdir -p unify/build
+          cd unify/build
+          cmake ..
+
+      - name: Build Unify
+        run: |
+          cd unify/build
+          make
+
+      - name: Install Unify
+        run: |
+          cd unify/build
+          sudo make install
+          sudo ldconfig
+
+      - name: Build Unify Tests
+        run: |
+          cd unify/build
+          make tests
+
+      - name: Run Unify Tests
+        run: |
+          cd unify/build
+          make check ARGS="$MAKEFLAGS"
+
+      - name: Print Unify Test Log
+        if: always()
+        run: |
+          cat unify/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
+
+      - name: Upload Unify Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unify
+          path: unify/build/
+
+  # Continue similarly for ure, miner, asmoses, opencog
+
+  # Example for opencog:
+
+  opencog:
+    name: OpenCog Job
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
+
+    needs: asmoses
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download ASMoses Artifact
