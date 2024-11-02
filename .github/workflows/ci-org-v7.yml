@@ -1,6 +1,6 @@
-# .github/workflows/ci-org-v3.yml
+# .github/workflows/ci-org-v7.yml
 
-name: CI Org v3
+name: CI Org v7
 
 on:
   push:
