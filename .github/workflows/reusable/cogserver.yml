@@ -14,7 +14,7 @@ on:
 
 jobs:
   cogserver_job:
-    name: CogServer Job
+    name: CogServer Build and Test
     runs-on: ubuntu-latest
     container:
       image: opencog/opencog-deps
@@ -44,7 +44,7 @@ jobs:
 
       - name: CMake Configure
         run: |
-          mkdir build
+          mkdir -p build
           cd build
           cmake ..
 
