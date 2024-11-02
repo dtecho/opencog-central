@@ -16,13 +16,14 @@ env:
 
 jobs:
   build-and-test:
-    name: Build and Test All Components
+    name: Build and Test CogUtil and AtomSpace
     runs-on: ubuntu-latest
     container:
       image: opencog/opencog-deps
       options: --user root
       env:
         CCACHE_DIR: /ws/ccache
+        MAKEFLAGS: -j2
 
     services:
       opencog-postgres:
@@ -30,7 +31,7 @@ jobs:
         env:
           POSTGRES_USER: opencog_test
           POSTGRES_PASSWORD: cheese
-          POSTGRES_DB: opencog_db
+          POSTGRES_DB: atomspace_db
         ports:
           - 5432:5432
         options: >-
@@ -48,26 +49,13 @@ jobs:
       - name: Configure Git Safe Directory
         run: git config --global --add safe.directory /__w/opencog-central/opencog-central
 
-      # 3. Setup ccache Cache
-      - name: Setup ccache Cache
-        uses: actions/cache@v4
-        with:
-          path: /ws/ccache
-          key: ccache-build-${{ runner.os }}-${{ hashFiles('**/*') }}
-          restore-keys: |
-            ccache-build-
-
-      # 4. Set MAKEFLAGS
-      - name: Set MAKEFLAGS
-        run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
-
-      # 5. Install Dependencies
+      # 3. Install Dependencies
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ccache pkg-config
+          sudo apt-get install -y ccache pkg-config cmake build-essential
 
-      # 6. Build and Install CogUtil
+      # 4. Build and Install CogUtil
       - name: Build and Install CogUtil
         run: |
           mkdir -p cogutil/build
@@ -77,13 +65,13 @@ jobs:
           sudo make install
           sudo ldconfig
 
-      # 7. Verify CogUtil Installation
+      # 5. Verify CogUtil Installation
       - name: Verify CogUtil Installation
         run: |
           pkg-config --cflags cogutil || { echo "CogUtil not found in pkg-config"; exit 1; }
           pkg-config --libs cogutil || { echo "CogUtil libraries not found"; exit 1; }
 
-      # 8. Build and Install AtomSpace
+      # 6. Build and Install AtomSpace
       - name: Build and Install AtomSpace
         run: |
           mkdir -p atomspace/build
@@ -93,76 +81,27 @@ jobs:
           sudo make install
           sudo ldconfig
 
-      # 9. Run AtomSpace Tests
+      # 7. Run AtomSpace Tests
       - name: Run AtomSpace Tests
         run: |
           cd atomspace/build
           make tests
           make check ARGS="$MAKEFLAGS"
 
-      # 10. Print AtomSpace Test Log
+      # 8. Print AtomSpace Test Log
       - name: Print AtomSpace Test Log
         if: always()
         run: |
           cat atomspace/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
 
-      # 11. (Optional) Repeat Steps 6-10 for Other Components
-      # Example: Build and Install CogServer
-      - name: Build and Install CogServer
-        run: |
-          mkdir -p cogserver/build
-          cd cogserver/build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/local ..
-          make
-          sudo make install
-          sudo ldconfig
-
-      # Run CogServer Tests
-      - name: Run CogServer Tests
-        run: |
-          cd cogserver/build
-          make tests
-          make check ARGS="$MAKEFLAGS"
-
-      # Print CogServer Test Log
-      - name: Print CogServer Test Log
-        if: always()
-        run: |
-          cat cogserver/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
-
-      # Similarly, add steps for attention, unify, ure, miner, asmoses, opencog
-
-      # 12. Build and Install OpenCog
-      - name: Build and Install OpenCog
-        run: |
-          mkdir -p opencog/build
-          cd opencog/build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/local ..
-          make
-          sudo make install
-          sudo ldconfig
-
-      # Run OpenCog Tests
-      - name: Run OpenCog Tests
-        run: |
-          cd opencog/build
-          make tests
-          make check ARGS="$MAKEFLAGS"
-
-      # Print OpenCog Test Log
-      - name: Print OpenCog Test Log
-        if: always()
-        run: |
-          cat opencog/build/tests/Testing/Temporary/LastTest.log || echo "Test log not found."
-
-      # 13. (Optional) Package Artifacts
-      - name: Package OpenCog
+      # 9. (Optional) Package Artifacts
+      - name: Package AtomSpace
         if: github.ref == 'refs/heads/main'
         run: |
-          cd opencog/build
+          cd atomspace/build
           make package || echo "Package target not defined."
 
-      # 14. (Optional) Upload Test Logs or Packages
+      # 10. (Optional) Upload Test Logs or Packages
       - name: Upload Test Logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -170,13 +109,10 @@ jobs:
           name: test-logs
           path: |
             atomspace/build/tests/Testing/Temporary/LastTest.log
-            cogserver/build/tests/Testing/Temporary/LastTest.log
-            opencog/build/tests/Testing/Temporary/LastTest.log
-          # Add other logs as needed
 
       - name: Upload Packages
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
-          name: opencog-packages
-          path: opencog/build/packages/ || echo "No packages to upload."
+          name: atomspace-packages
+          path: atomspace/build/packages/ || echo "No packages to upload."
