@@ -1,1 +1,106 @@
 
+# .github/workflows/main.yml
+
+name: Main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CCACHE_DIR: /ws/ccache
+  MAKEFLAGS: -j2
+
+jobs:
+  cogutil:
+    uses: ./.github/workflows/reusable/cogutil.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  atomspace:
+    needs: cogutil
+    uses: ./.github/workflows/reusable/atomspace.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  cogserver:
+    needs: atomspace
+    uses: ./.github/workflows/reusable/cogserver.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  attention:
+    needs: cogserver
+    uses: ./.github/workflows/reusable/attention.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  unify:
+    needs: atomspace
+    uses: ./.github/workflows/reusable/unify.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ure:
+    needs: 
+      - atomspace
+      - unify
+    uses: ./.github/workflows/reusable/ure.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  miner:
+    needs: ure
+    uses: ./.github/workflows/reusable/miner.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  asmoses:
+    needs: 
+      - cogutil
+      - atomspace
+      - ure
+    uses: ./.github/workflows/reusable/asmoses.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  opencog:
+    needs:
+      - atomspace
+      - ure
+      - cogserver
+      - attention
+    uses: ./.github/workflows/reusable/opencog.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  package:
+    needs: opencog
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/reusable/package.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
