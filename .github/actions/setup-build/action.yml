@@ -1,0 +1,21 @@
+# .github/actions/setup-build/action.yml
+
+name: 'Setup Build Environment'
+description: 'Sets up the build environment by restoring cache and setting MAKEFLAGS.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Start restoring ccache
+      run: date +%d-%m-%Y > /tmp/date
+
+    - name: Restore ccache
+      uses: actions/cache@v4
+      with:
+        path: /ws/ccache
+        key: ccache-${{ hashFiles('/tmp/date') }}
+        restore-keys: |
+          ccache-
+
+    - name: Set number of make jobs
+      run: echo "MAKEFLAGS=-j2" >> $GITHUB_ENV
