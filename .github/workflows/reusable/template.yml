@@ -1,4 +1,3 @@
-
 # .github/workflows/reusable/template.yml
 
 name: Reusable <Package Name> Workflow
