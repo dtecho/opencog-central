@@ -1,6 +1,6 @@
 # .github/workflows/main.yml
 
-name: Main
+name: Main CI/CD Pipeline
 
 on:
   push:
@@ -38,65 +38,40 @@ jobs:
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  attention:
-    needs: cogserver
-    uses: ./.github/workflows/reusable/attention.yml
-    with:
-      branch: main
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  unify:
-    needs: atomspace
-    uses: ./.github/workflows/reusable/unify.yml
-    with:
-      branch: main
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  ure:
-    needs: 
-      - atomspace
-      - unify
-    uses: ./.github/workflows/reusable/ure.yml
-    with:
-      branch: main
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  miner:
-    needs: ure
-    uses: ./.github/workflows/reusable/miner.yml
-    with:
-      branch: main
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  asmoses:
-    needs: 
-      - cogutil
-      - atomspace
-      - ure
-    uses: ./.github/workflows/reusable/asmoses.yml
-    with:
-      branch: main
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   opencog:
-    needs:
-      - atomspace
-      - ure
-      - cogserver
-      - attention
+    needs: cogserver
     uses: ./.github/workflows/reusable/opencog.yml
     with:
       branch: main
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  package:
+  asmoses:
     needs: opencog
+    uses: ./.github/workflows/reusable/asmoses.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ure:
+    needs: asmoses
+    uses: ./.github/workflows/reusable/ure.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  unify:
+    needs: ure
+    uses: ./.github/workflows/reusable/unify.yml
+    with:
+      branch: main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  package:
+    needs: unify
     if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/reusable/package.yml
     with:
