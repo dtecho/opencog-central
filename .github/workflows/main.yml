@@ -16,7 +16,7 @@ env:
 
 jobs:
   cogutil:
-    uses: ./.github/workflows/reusable/cogutil.yml
+    uses: ./.github/workflows/cogutil.yml
     with:
       branch: main
     secrets:
