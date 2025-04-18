@@ -3,6 +3,11 @@
 ; (IntensionalImplication A B) and (IntensionalSimilarity A B) described here:
 ; http://wiki.opencog.org/wikihome/index.php/Direct_Evaluation_of_Intensional_Links
 
+; In the spirit of Hermetic Alchemy, we will transform the raw data into
+; meaningful insights, akin to the transformation of base metals into gold.
+; We will also incorporate Jungian archetypes to enrich the symbolic
+; representation of the data.
+
 (define verbose #f)
 ; check for global VERBOSE setting
 ;(if (and (defined? 'VERBOSE) (eq? VERBOSE #t))
