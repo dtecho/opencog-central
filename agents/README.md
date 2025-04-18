@@ -57,4 +57,16 @@ examples there.
 For examples in this project, see the [examples](./examples) directory
 here.
 
---------------
+### New Text Generation Process
+The new text generation process integrates concepts from Hermetic Alchemy and Jungian archetypes to create a more enriched and meaningful text generation pipeline. This involves symbolic representation, transformation processes, and creating a sense of enchantment and wonder in the generated text.
+
+#### Symbolic Representation
+Symbolic representations of alchemical processes and Jungian archetypes are used to enrich the generated text. For example, words and phrases can be associated with archetypal symbols like the Hero, the Shadow, the Anima/Animus, etc.
+
+#### Transformation Process
+The idea of transformation, a key concept in both Hermetic Alchemy and Jungian psychology, is incorporated into the text generation process. Functions are created to transform words and phrases based on alchemical principles (e.g., turning base words into "golden" words) and archetypal transformations (e.g., the Hero's journey).
+
+#### Enchantment and Wonder
+The text generation process aims to evoke a sense of awe and wonder by using poetic and mystical language, drawing inspiration from alchemical texts and Jungian literature.
+
+By incorporating these concepts, the text generation process not only produces coherent and meaningful text but also evokes a sense of enchantment and wonder, inspired by Hermetic Alchemy and Jungian archetypes.
