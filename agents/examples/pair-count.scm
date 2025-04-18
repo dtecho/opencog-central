@@ -18,6 +18,11 @@
 ; 4) Using filters to increment counts on elements of a data stream.
 ; 5) Reading text from a file, and running it through the pipe.
 ;
+; In the spirit of Hermetic Alchemy, we will transform the raw text into
+; meaningful insights, akin to the transformation of base metals into gold.
+; We will also incorporate Jungian archetypes to enrich the symbolic
+; representation of the text.
+;
 (use-modules (opencog) (opencog exec) (opencog persist))
 (use-modules (opencog nlp) (opencog nlp lg-parse))
 (use-modules (opencog sensory))
@@ -125,10 +130,6 @@
 ; it specifies a mapping function from things that look like P to things
 ; Q made out of the parts of P. It is called a rule, because it is used
 ; in other places to implement logical implication.
-;
-; The RuleLink has an optional variable declaration, so that the rules
-; can be understood as P(x,y,z)->Q(x,y,z) where the components x,y,z
-; are picked out of the pattern P and are then used to build Q.
 ;
 ; See https://wiki.opencog.org/w/RuleLink
 ;
