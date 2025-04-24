@@ -3,7 +3,7 @@ FROM rust:latest
 
 # Install necessary dependencies
 RUN apt-get update && \
-    apt-get install -y qemu qemu-system-x86 build-essential git && \
+    apt-get install -y qemu-system qemu-system-x86 build-essential git && \
     rm -rf /var/lib/apt/lists/*
 
 # Clone the Redox OS repository
