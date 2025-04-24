@@ -1,18 +1,38 @@
 {
-    "name": "Redox OS Machine Learning Integration Environment",
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
+    "name": "OpenCog Development Environment",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "workspace",
+    "workspaceFolder": "/workspaces/opencog-central",
+    "remoteUser": "opencog",
     "customizations": {
-        // Configure properties specific to VS Code.
         "vscode": {
-            "settings": {},
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "python.defaultInterpreterPath": "/usr/bin/python3",
+                "cmake.configureOnOpen": true,
+                "editor.formatOnSave": true,
+                "files.trimTrailingWhitespace": true,
+                "C_Cpp.default.includePath": [
+                    "${workspaceFolder}/**",
+                    "/usr/local/include",
+                    "/usr/include"
+                ]
+            },
             "extensions": [
-                "ms-python.python"
+                "ms-python.python",
+                "ms-vscode.cpptools",
+                "twxs.cmake",
+                "ms-vscode.cmake-tools", 
+                "matklad.rust-analyzer",
+                "sjhuangx.vscode-scheme",
+                "clptn.code-paredit",
+                "ms-azuretools.vscode-docker",
+                "eamodio.gitlens"
             ]
         }
     },
-    "postCreateCommand": "pip3 install -r requirements.txt && cargo install hyperon"
+    "forwardPorts": [5000, 8888, 17001, 18001],
+    "postCreateCommand": "cd /workspaces/opencog-central && if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi && if command -v cargo &> /dev/null; then cargo install hyperon || echo 'Failed to install hyperon'; fi"
 }
 
 
