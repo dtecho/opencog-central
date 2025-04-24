@@ -4,12 +4,16 @@
     "dockerfile": "Dockerfile",
     "context": "."
   },
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "rust-lang.rust-analyzer"
+      ]
+    }
   },
-  "extensions": [
-    "rust-lang.rust-analyzer"
-  ],
   "postCreateCommand": "cd /redox && make all",
   "remoteUser": "root",
   "features": {

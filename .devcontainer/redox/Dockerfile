@@ -1,7 +1,7 @@
 # Use an official Rust image as the base
 FROM rust:latest
 
-# Install necessary dependencies
+# Updated April 24, 2025 - Install necessary dependencies with correct package names
 RUN apt-get update && \
     apt-get install -y qemu-system qemu-system-x86 build-essential git && \
     rm -rf /var/lib/apt/lists/*
