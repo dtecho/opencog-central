@@ -10,8 +10,8 @@ RUN apt-get update && \
 RUN git clone https://gitlab.redox-os.org/redox-os/redox.git /redox
 WORKDIR /redox
 
-# Build Redox OS
-RUN make all
+# Don't try to build Redox OS during container creation as it requires additional setup
+# The build will be triggered by the user when needed
 
-# Default command to run Redox with QEMU
-CMD ["make", "qemu"]
+# Default command to run Redox with QEMU when manually invoked
+CMD ["bash"]
