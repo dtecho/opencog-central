@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -Wall -fPIC -fstack-protector -Wno-variadic-macros -fopenmp -std=gnu++17 -fno-strict-aliasing -Wno-unused-function -O3 -g -shared -Wl,-soname,libexecutioncontext.so -o libexecutioncontext.so CMakeFiles/executioncontext.dir/Context.cc.o  -Wl,-rpath,:::::::::::::::::::::: -lpthread 

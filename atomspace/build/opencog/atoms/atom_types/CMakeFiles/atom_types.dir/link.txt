@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -Wall -fPIC -fstack-protector -Wno-variadic-macros -fopenmp -std=gnu++17 -O3 -g -shared -Wl,-soname,libatom_types.so -o libatom_types.so CMakeFiles/atom_types.dir/atom_types_init.cc.o CMakeFiles/atom_types.dir/NameServer.cc.o  -Wl,-rpath,/usr/local/lib/opencog: -lpthread /usr/local/lib/opencog/libcogutil.so 

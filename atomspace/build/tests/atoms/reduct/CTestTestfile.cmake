@@ -1,0 +1,20 @@
+# CMake generated Testfile for 
+# Source directory: /workspaces/opencog-central/atomspace/tests/atoms/reduct
+# Build directory: /workspaces/opencog-central/atomspace/build/tests/atoms/reduct
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+add_test(ReductUTest "ReductUTest")
+set_tests_properties(ReductUTest PROPERTIES  ENVIRONMENT "GUILE_LOAD_PATH=/workspaces/opencog-central/atomspace/build/opencog/scm" _BACKTRACE_TRIPLES "/usr/local/share/opencog/cmake/AddCxxtest.cmake;36;ADD_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;4;ADD_CXXTEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;0;")
+add_test(HeavisideUTest "HeavisideUTest")
+set_tests_properties(HeavisideUTest PROPERTIES  ENVIRONMENT "GUILE_LOAD_PATH=/workspaces/opencog-central/atomspace/build/opencog/scm" _BACKTRACE_TRIPLES "/usr/local/share/opencog/cmake/AddCxxtest.cmake;36;ADD_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;5;ADD_CXXTEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;0;")
+add_test(MinMaxUTest "MinMaxUTest")
+set_tests_properties(MinMaxUTest PROPERTIES  ENVIRONMENT "GUILE_LOAD_PATH=/workspaces/opencog-central/atomspace/build/opencog/scm" _BACKTRACE_TRIPLES "/usr/local/share/opencog/cmake/AddCxxtest.cmake;36;ADD_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;6;ADD_CXXTEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;0;")
+add_test(AccumulateUTest "AccumulateUTest")
+set_tests_properties(AccumulateUTest PROPERTIES  ENVIRONMENT "GUILE_LOAD_PATH=/workspaces/opencog-central/atomspace/build/opencog/scm" _BACKTRACE_TRIPLES "/usr/local/share/opencog/cmake/AddCxxtest.cmake;36;ADD_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;7;ADD_CXXTEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;0;")
+add_test(BoolLibraryTest "guile" "-L" "/workspaces/opencog-central/atomspace/build/opencog/scm" "--use-srfi=64" "/workspaces/opencog-central/atomspace/tests/atoms/reduct/bool-library-test.scm")
+set_tests_properties(BoolLibraryTest PROPERTIES  ENVIRONMENT "GUILE_LOAD_PATH=/workspaces/opencog-central/atomspace/build/opencog/scm" WORKING_DIRECTORY "/workspaces/opencog-central/atomspace/build/tests/atoms/reduct" _BACKTRACE_TRIPLES "/workspaces/opencog-central/atomspace/cmake/OpenCogGuile.cmake;332;ADD_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;9;ADD_GUILE_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;0;")
+add_test(MathLibraryTest "guile" "-L" "/workspaces/opencog-central/atomspace/build/opencog/scm" "--use-srfi=64" "/workspaces/opencog-central/atomspace/tests/atoms/reduct/math-library-test.scm")
+set_tests_properties(MathLibraryTest PROPERTIES  ENVIRONMENT "GUILE_LOAD_PATH=/workspaces/opencog-central/atomspace/build/opencog/scm" WORKING_DIRECTORY "/workspaces/opencog-central/atomspace/build/tests/atoms/reduct" _BACKTRACE_TRIPLES "/workspaces/opencog-central/atomspace/cmake/OpenCogGuile.cmake;332;ADD_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;10;ADD_GUILE_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;0;")
+add_test(ElementOfTest "guile" "-L" "/workspaces/opencog-central/atomspace/build/opencog/scm" "--use-srfi=64" "/workspaces/opencog-central/atomspace/tests/atoms/reduct/element-of-test.scm")
+set_tests_properties(ElementOfTest PROPERTIES  ENVIRONMENT "GUILE_LOAD_PATH=/workspaces/opencog-central/atomspace/build/opencog/scm" WORKING_DIRECTORY "/workspaces/opencog-central/atomspace/build/tests/atoms/reduct" _BACKTRACE_TRIPLES "/workspaces/opencog-central/atomspace/cmake/OpenCogGuile.cmake;332;ADD_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;11;ADD_GUILE_TEST;/workspaces/opencog-central/atomspace/tests/atoms/reduct/CMakeLists.txt;0;")
