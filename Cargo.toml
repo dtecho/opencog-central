@@ -1,15 +1,7 @@
-[package]
-name = "hyperon"
-version = "0.1.0"
-authors = ["Your Name <you@example.com>"]
-edition = "2018"
-
-[dependencies]
-hyperon = "0.1.0"
-
-[lib]
-name = "hyperon"
-crate-type = ["cdylib"]
+[workspace]
+members = [
+    "ocpkg"
+]
 
 [profile.release]
 lto = true
@@ -20,9 +12,4 @@ debug = false
 lto = false
 opt-level = 0
 debug = true
-
-[workspace]
-members = [
-    "hyperon"
-]
 

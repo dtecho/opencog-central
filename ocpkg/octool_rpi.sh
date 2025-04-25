@@ -46,7 +46,7 @@ INSTALL_PACKAGES="
 	gearman \
 	libgearman-dev \
 	ccache \
-	libgsasl7 \
+	gsasl-common \
 	libldap2-dev \
 	krb5-multidev \
 	libatomic-ops-dev \
