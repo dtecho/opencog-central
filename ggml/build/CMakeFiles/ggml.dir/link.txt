@@ -1,0 +1,2 @@
+/nix/store/gnqvmr5fm2lpaq767834xc42z1qgx5ka-clang-wrapper-14.0.6/bin/ar qc libggml.a CMakeFiles/ggml.dir/src/ggml_opencog.c.o
+/nix/store/gnqvmr5fm2lpaq767834xc42z1qgx5ka-clang-wrapper-14.0.6/bin/ranlib libggml.a
