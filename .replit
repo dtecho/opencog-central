@@ -19,3 +19,12 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python agi-skintwin/main.py --demo"
+
+[[workflows.workflow]]
+name = "KoboldCpp Server"
+author = 39128348
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd kobold-cpp && python scripts/run_koboldcpp.py --model /path/to/model.gguf --port 5001"
