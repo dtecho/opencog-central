@@ -1,0 +1,69 @@
+
+# Apache MiniNiFi Agent Configuration
+
+agent:
+  id: "minifi-agent-001"
+  name: "OpenCog MiniNiFi Agent"
+  class: "org.apache.minifi.MiNiFiAgent"
+  
+server:
+  port: 8081
+  host: "0.0.0.0"
+  
+c2:
+  enabled: true
+  url: "http://localhost:10080/c2/config"
+  agent_id: "minifi-agent-001"
+  heartbeat_interval: 30
+  acknowledge_timeout: 15
+  
+atomspace:
+  enabled: true
+  host: "localhost"
+  port: 17001
+  timeout: 30
+  
+api:
+  enabled: true
+  port: 8081
+  cors_enabled: true
+  
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+flows:
+  max_concurrent: 5
+  default_timeout: 60
+  
+processors:
+  thread_pool_size: 2
+  max_memory_mb: 512
+  
+cognitive:
+  reasoning:
+    confidence_threshold: 0.6
+    max_inference_depth: 3
+  
+  pattern_matching:
+    similarity_threshold: 0.8
+    max_patterns: 500
+    
+  memory:
+    cache_size_mb: 128
+    persistence_enabled: false
+
+edge:
+  resource_monitoring: true
+  auto_scaling: false
+  compression_enabled: true
+  
+templates:
+  - name: "simple_data_flow"
+    description: "Basic data generation and processing"
+    
+  - name: "atomspace_edge_sync" 
+    description: "AtomSpace synchronization for edge devices"
+    
+  - name: "cognitive_edge_pipeline"
+    description: "Lightweight cognitive processing for edge"
