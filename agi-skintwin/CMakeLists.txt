@@ -1,175 +1,136 @@
-
-CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
-PROJECT(SkinTwin-ASI)
-
-# Set version
-SET(SEMANTIC_VERSION 0.1.0)
-
-# Add OpenCog cmake modules to search path
-list(APPEND CMAKE_MODULE_PATH
-    "${CMAKE_SOURCE_DIR}/cmake"
-    "${PROJECT_SOURCE_DIR}/../atomspace/cmake"
-    "${PROJECT_SOURCE_DIR}/../cogutil/cmake"
-)
-
-# Find required OpenCog components
-FIND_PACKAGE(CogUtil 2.0.3 CONFIG REQUIRED)
-FIND_PACKAGE(AtomSpace 5.0.4 CONFIG REQUIRED)
-
-# Python bindings
-FIND_PACKAGE(PkgConfig REQUIRED)
-FIND_PACKAGE(Python3 REQUIRED COMPONENTS Interpreter Development)
+cmake_minimum_required(VERSION 3.12)
+project(SkinTwin VERSION 1.0.0 LANGUAGES CXX)
 
 # Set C++ standard
-SET(CMAKE_CXX_STANDARD 17)
-SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Find required packages
+find_package(PkgConfig REQUIRED)
+find_package(OpenMP REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system filesystem thread)
+
+# Find OpenCog components
+find_package(CogUtil 2.0.3 REQUIRED)
+find_package(AtomSpace 5.0.4 REQUIRED)
+find_package(CogServer 1.0.0 REQUIRED)
+
+# Find Python and Cython
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+find_package(Cython 0.29 REQUIRED)
 
 # Include directories
-INCLUDE_DIRECTORIES(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${COGUTIL_INCLUDE_DIR}
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/agi-bio
+    ${CMAKE_CURRENT_SOURCE_DIR}/cheminformatics
     ${ATOMSPACE_INCLUDE_DIR}
+    ${COGUTIL_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
     ${Python3_INCLUDE_DIRS}
 )
 
 # Add subdirectories
-ADD_SUBDIRECTORY(skin_twin)
+add_subdirectory(src)
 
-# Python module installation
-IF(HAVE_CYTHON)
-    ADD_SUBDIRECTORY(skin_twin/cython)
-ENDIF(HAVE_CYTHON)
-
-# Configuration
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/lib/SkinTwinConfig.cmake.in
-    ${CMAKE_BINARY_DIR}/SkinTwinConfig.cmake @ONLY)
-
-# Installation
-INSTALL(FILES
-    ${CMAKE_BINARY_DIR}/SkinTwinConfig.cmake
-    DESTINATION lib/cmake/SkinTwin)
-
-# Package information
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SkinTwin-ASI: OpenCog-based Multiscale Skin Modeling System")
-SET(CPACK_PACKAGE_NAME "SkinTwin-ASI")
-SET(CPACK_PACKAGE_VENDOR "SkinTwin Development Team")
-SET(CPACK_PACKAGE_VERSION ${SEMANTIC_VERSION})
-
-INCLUDE(CPack)
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
-PROJECT(SkinTwin)
-
-# Set C++ standard
-SET(CMAKE_CXX_STANDARD 17)
-SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Find required packages
-FIND_PACKAGE(OpenCog REQUIRED)
-FIND_PACKAGE(PkgConfig REQUIRED)
-FIND_PACKAGE(Boost REQUIRED COMPONENTS system filesystem thread)
-FIND_PACKAGE(Python3 COMPONENTS Interpreter Development REQUIRED)
-
-# Include directories
-INCLUDE_DIRECTORIES(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${OpenCog_INCLUDE_DIRS}
-    ${Python3_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/agi-bio
-    ${CMAKE_CURRENT_SOURCE_DIR}/cheminformatics
-)
-
-# Set up compilation flags
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O3")
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
-
-# Core library
-SET(SKIN_CORE_SOURCES
+# Create SkinTwin library
+set(SKINTWIN_SOURCES
     src/core/SkinAtomSpace.cpp
+    src/core/SkinAtomTypes.cpp
     src/multiscale/MultiscaleModel.cpp
     src/integration/BiologicalIntegration.cpp
     src/integration/ChemicalIntegration.cpp
 )
 
-ADD_LIBRARY(skintwin-core SHARED ${SKIN_CORE_SOURCES})
+add_library(skintwin SHARED ${SKINTWIN_SOURCES})
 
-TARGET_LINK_LIBRARIES(skintwin-core
-    ${OpenCog_LIBRARIES}
+target_link_libraries(skintwin
+    ${ATOMSPACE_LIBRARIES}
+    ${COGUTIL_LIBRARIES}
     ${Boost_LIBRARIES}
-    agi-bio
-    cheminformatics
+    OpenMP::OpenMP_CXX
 )
 
-# Cython bindings
-FIND_PACKAGE(Cython REQUIRED)
-
-SET(CYTHON_FLAGS "--cplus")
-SET(CYTHON_SOURCES
-    src/cython/skin_cython.pyx
+# Set library properties
+set_target_properties(skintwin PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION 1
+    OUTPUT_NAME "skintwin"
 )
 
-# Generate C++ from Cython
-FOREACH(pyx_file ${CYTHON_SOURCES})
-    GET_FILENAME_COMPONENT(module_name ${pyx_file} NAME_WE)
-    SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${module_name}.cpp")
-    
-    ADD_CUSTOM_COMMAND(
-        OUTPUT ${cpp_file}
-        COMMAND ${CYTHON_EXECUTABLE} ${CYTHON_FLAGS} -o ${cpp_file} ${CMAKE_CURRENT_SOURCE_DIR}/${pyx_file}
-        DEPENDS ${pyx_file}
-        COMMENT "Generating ${cpp_file} from ${pyx_file}"
-    )
-    
-    PYTHON3_ADD_LIBRARY(${module_name} MODULE ${cpp_file})
-    TARGET_LINK_LIBRARIES(${module_name} skintwin-core ${Python3_LIBRARIES})
-    
-    # Set properties for Python module
-    SET_TARGET_PROPERTIES(${module_name} PROPERTIES 
-        PREFIX ""
-        SUFFIX "${Python3_SOABI}"
-    )
-    
-ENDFOREACH()
-
-# Tests
-ENABLE_TESTING()
-
-SET(TEST_SOURCES
-    tests/test_skin_atomspace.cpp
-    tests/test_multiscale_model.cpp
-    tests/test_biological_integration.cpp
-    tests/test_chemical_integration.cpp
-)
-
-FOREACH(test_file ${TEST_SOURCES})
-    GET_FILENAME_COMPONENT(test_name ${test_file} NAME_WE)
-    ADD_EXECUTABLE(${test_name} ${test_file})
-    TARGET_LINK_LIBRARIES(${test_name} skintwin-core ${OpenCog_LIBRARIES})
-    ADD_TEST(NAME ${test_name} COMMAND ${test_name})
-ENDFOREACH()
-
-# Installation
-INSTALL(TARGETS skintwin-core
+# Install library
+install(TARGETS skintwin
+    EXPORT SkinTwinTargets
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
 )
 
-INSTALL(DIRECTORY src/
+# Install headers
+install(DIRECTORY src/
     DESTINATION include/skintwin
     FILES_MATCHING PATTERN "*.h"
 )
 
-# Python package installation
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/skin_cython.so
-    DESTINATION ${Python3_SITEARCH}/skintwin
-)
+# Create package config files
+include(CMakePackageConfigHelpers)
 
-# Configuration file
-CONFIGURE_FILE(
+configure_package_config_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/SkinTwinConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/SkinTwinConfig.cmake
-    @ONLY
+    INSTALL_DESTINATION lib/cmake/SkinTwin
 )
 
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/SkinTwinConfig.cmake
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/SkinTwinConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+export(EXPORT SkinTwinTargets
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/SkinTwinTargets.cmake
+)
+
+install(EXPORT SkinTwinTargets
+    FILE SkinTwinTargets.cmake
     DESTINATION lib/cmake/SkinTwin
 )
+
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/SkinTwinConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/SkinTwinConfigVersion.cmake
+    DESTINATION lib/cmake/SkinTwin
+)
+
+# Build Cython extensions
+add_custom_target(cython_extensions ALL
+    COMMAND ${Python3_EXECUTABLE} setup.py build_ext --inplace
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Building Cython extensions"
+)
+
+add_dependencies(cython_extensions skintwin)
+
+# Enable testing
+enable_testing()
+add_subdirectory(tests)
+
+# Documentation
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+                   ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target(doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+endif()
+
+# Package information
+set(CPACK_PACKAGE_NAME "SkinTwin")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_DESCRIPTION "Multiscale Computational Skin Model for OpenCog")
+set(CPACK_PACKAGE_CONTACT "skintwin@opencog.org")
+
+include(CPack)
