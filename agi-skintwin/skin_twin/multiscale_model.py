@@ -48,6 +48,11 @@ class MultiscaleModel:
         self.organ_components = {}
         
         self.logger.info("Multiscale skin model initialized")
+        
+        # Initialize all scale levels
+        self.initialize_molecular_level()
+        self.initialize_cellular_level() 
+        self.initialize_tissue_level()
     
     def initialize_molecular_level(self):
         """Initialize molecular-level components"""

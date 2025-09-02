@@ -22,16 +22,19 @@ class SkinTwinCore:
     - Marduk cognitive architecture
     """
     
-    def __init__(self, atomspace_manager, multiscale_model):
+    def __init__(self, atomspace_manager, multiscale_model, config=None):
         self.logger = logging.getLogger(__name__)
         self.atomspace_manager = atomspace_manager
         self.multiscale_model = multiscale_model
+        self.config = config or {}
         self.is_running = False
         
         # System components
         self.deep_tree_echo = None
         self.marduk_agent = None
         self.web_interface = None
+        self.biological_integration = None
+        self.chemical_integration = None
         
         self.logger.info("SkinTwin core system initialized")
     
@@ -84,26 +87,71 @@ class SkinTwinCore:
     def _load_biological_knowledge(self):
         """Load biological knowledge from agi-bio module"""
         self.logger.info("Loading biological knowledge base...")
-        # Integration with agi-bio will be implemented here
-        pass
+        try:
+            from .biological_integration import BiologicalIntegration
+            
+            self.biological_integration = BiologicalIntegration(
+                self.atomspace_manager, 
+                self.config.get('biological_integration', {})
+            )
+            self.biological_integration.load_biological_knowledge()
+            
+        except Exception as e:
+            self.logger.error(f"Failed to initialize biological integration: {e}")
     
     def _load_chemical_knowledge(self):
         """Load chemical knowledge from cheminformatics module"""
         self.logger.info("Loading chemical knowledge base...")
-        # Integration with cheminformatics will be implemented here
-        pass
+        try:
+            from .chemical_integration import ChemicalIntegration
+            
+            self.chemical_integration = ChemicalIntegration(
+                self.atomspace_manager,
+                self.config.get('chemical_integration', {})
+            )
+            self.chemical_integration.load_chemical_knowledge()
+            
+        except Exception as e:
+            self.logger.error(f"Failed to initialize chemical integration: {e}")
     
     def _initialize_ai_agents(self):
         """Initialize Deep Tree Echo and Marduk AI agents"""
         self.logger.info("Initializing AI agents...")
-        # Deep Tree Echo and Marduk integration will be implemented here
-        pass
+        
+        # Initialize placeholder AI agent interfaces
+        self.deep_tree_echo = {
+            "status": "initializing",
+            "capabilities": ["pattern_recognition", "temporal_reasoning", "memory_formation"]
+        }
+        
+        self.marduk_agent = {
+            "status": "initializing", 
+            "capabilities": ["cognitive_architecture", "decision_making", "goal_management"]
+        }
+        
+        self.logger.info("AI agents initialized (placeholder mode)")
     
     def _start_web_interface(self):
         """Start the web-based analysis workbench"""
         self.logger.info("Starting web interface...")
-        # Web interface will be implemented here
-        pass
+        try:
+            from .web_interface import SkinTwinWebInterface
+            
+            self.web_interface = SkinTwinWebInterface(
+                self,
+                self.config.get('web_interface', {})
+            )
+            
+            # Start web interface in a separate thread
+            import threading
+            web_thread = threading.Thread(target=self.web_interface.start)
+            web_thread.daemon = True
+            web_thread.start()
+            
+            self.logger.info("Web interface started successfully")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to start web interface: {e}")
     
     def get_status(self) -> Dict[str, Any]:
         """Get system status information"""

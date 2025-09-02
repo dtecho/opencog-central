@@ -27,6 +27,18 @@ def main():
     logger.info("Initializing SkinTwin-ASI Comprehensive Skin Modeling System")
     
     try:
+        # Load configuration
+        import yaml
+        config_path = project_root / "config.yaml"
+        
+        if config_path.exists():
+            with open(config_path, 'r') as f:
+                config = yaml.safe_load(f)
+            logger.info("Configuration loaded from config.yaml")
+        else:
+            config = {}
+            logger.warning("config.yaml not found, using default configuration")
+        
         # Import core modules
         from skin_twin.core import SkinTwinCore
         from skin_twin.atomspace_integration import AtomSpaceManager
@@ -40,10 +52,22 @@ def main():
         multiscale_model = MultiscaleModel(atomspace_manager)
         
         logger.info("Starting SkinTwin core system...")
-        skin_twin = SkinTwinCore(atomspace_manager, multiscale_model)
+        skin_twin = SkinTwinCore(atomspace_manager, multiscale_model, config)
         
         # Start the system
         skin_twin.start()
+        
+        # Keep the system running
+        logger.info("SkinTwin-ASI system is running. Access web interface at http://localhost:5000")
+        
+        try:
+            # Keep main thread alive
+            while skin_twin.is_running:
+                import time
+                time.sleep(1)
+        except KeyboardInterrupt:
+            logger.info("Shutdown requested by user")
+            skin_twin.stop()
         
     except ImportError as e:
         logger.error(f"Missing dependencies: {e}")

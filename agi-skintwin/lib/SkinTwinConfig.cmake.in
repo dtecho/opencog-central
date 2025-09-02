@@ -1,0 +1,21 @@
+
+# SkinTwin-ASI CMake Configuration
+
+SET(SKINTWIN_FOUND TRUE)
+SET(SKINTWIN_VERSION @SEMANTIC_VERSION@)
+
+# Include directories
+SET(SKINTWIN_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include/opencog")
+
+# Libraries
+SET(SKINTWIN_LIBRARIES
+    skintwin-core
+    skintwin-multiscale
+    skintwin-atomspace
+)
+
+# Data files
+SET(SKINTWIN_DATA_DIR "@CMAKE_INSTALL_PREFIX@/share/opencog/skintwin")
+
+# Python modules
+SET(SKINTWIN_PYTHON_DIR "@CMAKE_INSTALL_PREFIX@/lib/python@Python3_VERSION_MAJOR@.@Python3_VERSION_MINOR@/site-packages")
