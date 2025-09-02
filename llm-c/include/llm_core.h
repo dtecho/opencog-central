@@ -1,4 +1,3 @@
-
 #ifndef LLM_CORE_H
 #define LLM_CORE_H
 
@@ -200,5 +199,44 @@ void generate_text(const transformer_config_t* config, const float* weights,
 // Utility functions
 void matrix_multiply(const float* a, const float* b, float* c, 
                     int m, int n, int k);
+
+// Function declarations for optimization algorithms
+void adam_optimizer_step(float* params, float* gradients, float* m, float* v, 
+                        int size, float lr, float beta1, float beta2, float epsilon, int step);
+void sgd_optimizer_step(float* params, float* gradients, int size, float lr, float momentum);
+
+// OpenCog-specific functionality
+typedef struct AtomSpace AtomSpace;
+typedef struct AttentionBank AttentionBank;
+typedef struct SchemeEnvironment SchemeEnvironment;
+typedef struct PatternMiner PatternMiner;
+typedef struct Population Population;
+
+// AtomSpace bridge functions
+AtomSpace* create_atomspace(size_t initial_capacity);
+void add_concept_node(AtomSpace* space, const char* name, float truth, float conf);
+void add_predicate_node(AtomSpace* space, const char* name, float truth, float conf);
+void cleanup_atomspace(AtomSpace* space);
+
+// ECAN attention functions
+AttentionBank* create_attention_bank(size_t capacity);
+void update_attention(AttentionBank* bank, const char* atom_id, float activity);
+void manage_attention_economy(AttentionBank* bank);
+
+// Scheme interface functions
+SchemeEnvironment* create_scheme_env(size_t capacity);
+char* eval_scheme(SchemeEnvironment* env, const char* expression);
+int load_scheme_file(SchemeEnvironment* env, const char* filename);
+void cleanup_scheme_env(SchemeEnvironment* env);
+
+// Pattern mining functions
+PatternMiner* create_pattern_miner(size_t capacity, int min_freq, float min_sig);
+void mine_patterns(PatternMiner* miner, char** corpus, int corpus_size);
+void cleanup_pattern_miner(PatternMiner* miner);
+
+// MOSES evolution functions
+Population* create_population(size_t max_size);
+void run_moses_evolution(Population* pop, struct {int max_generations; float mutation_rate; float crossover_rate; int population_size; int elitism_count;} config, float** training_data, int data_size);
+void cleanup_population(Population* pop);
 
 #endif // LLM_CORE_H
