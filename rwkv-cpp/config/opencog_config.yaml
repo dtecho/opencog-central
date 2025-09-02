@@ -1,0 +1,52 @@
+
+# OpenCog-RWKV Integration Configuration
+
+model:
+  path: "models/rwkv-opencog.bin"
+  context_length: 4096
+  layers: 32
+  embed_dim: 1024
+
+atomspace:
+  enable_bridge: true
+  truth_value_threshold: 0.7
+  attention_threshold: 0.5
+  
+cognitive_modes:
+  reasoning:
+    pln_enabled: true
+    inference_steps: 10
+    confidence_threshold: 0.8
+  
+  attention:
+    ecan_enabled: true
+    attention_decay: 0.95
+    importance_threshold: 0.3
+  
+  learning:
+    pattern_mining: true
+    min_pattern_support: 2
+    max_pattern_length: 5
+  
+  language:
+    ghost_chatbot: true
+    natural_language_generation: true
+    semantic_parsing: true
+
+memory:
+  episodic:
+    max_episodes: 10000
+    decay_rate: 0.99
+  
+  procedural:
+    max_procedures: 1000
+    success_threshold: 0.7
+  
+  declarative:
+    max_facts: 50000
+    confidence_threshold: 0.6
+
+performance:
+  batch_size: 32
+  parallel_threads: 4
+  gpu_acceleration: true

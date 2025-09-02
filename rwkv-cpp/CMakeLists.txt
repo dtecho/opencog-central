@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.12)
 project(rwkv-cpp-implementation VERSION 1.0.0)
 
@@ -44,3 +43,11 @@ endif()
 # Compiler flags
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+
+# Optional features
+option(RWKV_BUILD_TOOLS "Build conversion and quantization tools" ON)
+option(RWKV_BUILD_EXAMPLES "Build example programs" ON)
+option(RWKV_BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
+option(RWKV_OPENCOG_INTEGRATION "Enable OpenCog AtomSpace integration" ON)
+option(RWKV_COGNITIVE_FEATURES "Enable cognitive architecture features" ON)
+option(RWKV_MEMORY_SYSTEMS "Enable advanced memory systems" ON)
