@@ -1,75 +1,175 @@
 
-#include "opencog_llama.h"
 #include <iostream>
 #include <vector>
+#include <string>
+
+#include "../include/opencog_llama.h"
+#include "../include/atomspace_llama.h"
+
+using namespace opencog;
+using namespace opencog::llama;
 
 int main() {
-    using namespace opencog::llama;
+    std::cout << "=== OpenCog-Llama Basic Reasoning Example ===" << std::endl;
     
-    // Initialize the OpenCog-LLaMA system
-    OpenCogLLaMA cognitive_system;
-    
-    // Load a model (you'll need to provide the path to your model)
-    std::string model_path = "../models/llama-7b-q4_0.gguf";
-    
-    if (!cognitive_system.initialize(model_path)) {
-        std::cerr << "Failed to initialize cognitive system" << std::endl;
+    try {
+        // Initialize the OpenCog-Llama system
+        OpenCogLlama llama_engine;
+        
+        std::cout << "\n1. Initializing system..." << std::endl;
+        if (!llama_engine.initialize("models/llama-7b.gguf", "")) {
+            std::cerr << "Failed to initialize OpenCog-Llama system" << std::endl;
+            return 1;
+        }
+        
+        // Set up cognitive parameters
+        llama_engine.set_reasoning_depth(5);
+        llama_engine.set_creativity_level(0.7);
+        llama_engine.set_logical_strictness(0.8);
+        
+        // Set up callbacks for monitoring
+        llama_engine.set_reasoning_callback([](const std::string& reasoning, double confidence) {
+            std::cout << "Reasoning completed with confidence: " << confidence << std::endl;
+        });
+        
+        llama_engine.set_learning_callback([](const Handle& atom, const TruthValue& tv) {
+            std::cout << "Knowledge updated: " << atom->get_name() 
+                     << " (confidence: " << tv->get_confidence() << ")" << std::endl;
+        });
+        
+        std::cout << "\n2. Creating knowledge base..." << std::endl;
+        
+        // Create some basic concepts
+        Handle human = llama_engine.create_concept("Human", 
+            SimpleTruthValue::createTV(0.9, 0.95));
+        Handle animal = llama_engine.create_concept("Animal", 
+            SimpleTruthValue::createTV(0.9, 0.95));
+        Handle mortal = llama_engine.create_concept("Mortal", 
+            SimpleTruthValue::createTV(0.9, 0.95));
+        Handle socrates = llama_engine.create_concept("Socrates", 
+            SimpleTruthValue::createTV(0.95, 0.99));
+        
+        // Create relationships
+        Handle human_is_animal = llama_engine.create_relationship(human, animal, "is_a");
+        Handle animal_is_mortal = llama_engine.create_relationship(animal, mortal, "is_a");
+        Handle socrates_is_human = llama_engine.create_relationship(socrates, human, "is_a");
+        
+        std::cout << "Knowledge base created with " << llama_engine.get_knowledge_base_size() 
+                 << " atoms" << std::endl;
+        
+        std::cout << "\n3. Performing basic reasoning..." << std::endl;
+        
+        // Basic deductive reasoning
+        std::vector<Handle> context = {human, animal, mortal, socrates, 
+                                     human_is_animal, animal_is_mortal, socrates_is_human};
+        
+        std::string query = "Is Socrates mortal?";
+        std::string reasoning_result = llama_engine.reason(query, context);
+        
+        std::cout << "\nQuery: " << query << std::endl;
+        std::cout << "Reasoning Result:\n" << reasoning_result << std::endl;
+        
+        std::cout << "\n4. Testing different types of reasoning..." << std::endl;
+        
+        // Analogical reasoning
+        std::cout << "\n--- Analogical Reasoning ---" << std::endl;
+        std::string analogy = llama_engine.analogical_reasoning(human, animal);
+        std::cout << analogy << std::endl;
+        
+        // Causal reasoning
+        std::cout << "\n--- Causal Reasoning ---" << std::endl;
+        Handle cause = llama_engine.create_concept("Rain", SimpleTruthValue::createTV(0.8, 0.9));
+        Handle effect = llama_engine.create_concept("WetGround", SimpleTruthValue::createTV(0.8, 0.9));
+        std::string causation = llama_engine.causal_reasoning(cause, effect);
+        std::cout << causation << std::endl;
+        
+        // Temporal reasoning
+        std::cout << "\n--- Temporal Reasoning ---" << std::endl;
+        std::vector<Handle> events = {
+            llama_engine.create_concept("Wake_Up", SimpleTruthValue::createTV(0.9, 0.95)),
+            llama_engine.create_concept("Eat_Breakfast", SimpleTruthValue::createTV(0.8, 0.9)),
+            llama_engine.create_concept("Go_To_Work", SimpleTruthValue::createTV(0.85, 0.92))
+        };
+        std::string temporal = llama_engine.temporal_reasoning(events);
+        std::cout << temporal << std::endl;
+        
+        std::cout << "\n5. Testing learning capabilities..." << std::endl;
+        
+        // Simulate learning from interaction
+        llama_engine.learn_from_interaction(
+            "What is the capital of France?",
+            "The capital of France is Paris. Paris is a major European city known for its culture and history."
+        );
+        
+        llama_engine.learn_from_interaction(
+            "How do birds fly?",
+            "Birds fly using their wings to generate lift and thrust. They have hollow bones and specialized muscles."
+        );
+        
+        std::cout << "\n6. Testing inference capabilities..." << std::endl;
+        
+        // Forward inference
+        Handle premise = llama_engine.create_concept("All_birds_can_fly", 
+            SimpleTruthValue::createTV(0.7, 0.8));
+        Handle inference_result = llama_engine.forward_inference(premise, "universal_instantiation");
+        
+        if (inference_result != Handle::UNDEFINED) {
+            std::cout << "Forward inference result: " << inference_result->get_name() << std::endl;
+        }
+        
+        // Backward inference
+        Handle goal = llama_engine.create_concept("Prove_Socrates_is_mortal", 
+            SimpleTruthValue::createTV(0.6, 0.7));
+        Handle backward_result = llama_engine.backward_inference(goal);
+        
+        if (backward_result != Handle::UNDEFINED) {
+            std::cout << "Backward inference found path to goal" << std::endl;
+        }
+        
+        std::cout << "\n7. System analysis and metrics..." << std::endl;
+        
+        // Display system status
+        std::cout << llama_engine.get_system_status() << std::endl;
+        
+        // Test explanation capabilities
+        std::cout << "\n--- Explaining Reasoning ---" << std::endl;
+        std::string explanation = llama_engine.explain_reasoning(socrates);
+        std::cout << explanation << std::endl;
+        
+        // Calculate cognitive metrics
+        auto metrics = utils::calculate_cognitive_metrics(llama_engine);
+        std::cout << "\n--- Cognitive Metrics ---" << std::endl;
+        std::cout << "Reasoning Accuracy: " << metrics.reasoning_accuracy << std::endl;
+        std::cout << "Knowledge Coverage: " << metrics.knowledge_coverage << std::endl;
+        std::cout << "Inference Speed: " << metrics.inference_speed << " inferences/sec" << std::endl;
+        std::cout << "Active Concepts: " << metrics.active_concepts << std::endl;
+        std::cout << "Learned Patterns: " << metrics.learned_patterns << std::endl;
+        
+        std::cout << "\n8. Saving knowledge base..." << std::endl;
+        
+        if (llama_engine.save_atomspace("knowledge_base_output.scm")) {
+            std::cout << "Knowledge base saved successfully" << std::endl;
+        } else {
+            std::cout << "Failed to save knowledge base" << std::endl;
+        }
+        
+        std::cout << "\n=== Example completed successfully ===" << std::endl;
+        
+        // Cleanup is automatic via destructors
+        
+    } catch (const LlamaInitializationError& e) {
+        std::cerr << "Initialization Error: " << e.what() << std::endl;
+        return 1;
+    } catch (const ReasoningError& e) {
+        std::cerr << "Reasoning Error: " << e.what() << std::endl;
+        return 1;
+    } catch (const AtomSpaceError& e) {
+        std::cerr << "AtomSpace Error: " << e.what() << std::endl;
+        return 1;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
-    
-    std::cout << "OpenCog-LLaMA Cognitive System initialized!" << std::endl;
-    
-    // Example 1: Basic text generation
-    std::cout << "\n=== Basic Text Generation ===" << std::endl;
-    std::string prompt = "What is artificial intelligence?";
-    std::string response = cognitive_system.generate_text(prompt, 150);
-    std::cout << "Q: " << prompt << std::endl;
-    std::cout << "A: " << response << std::endl;
-    
-    // Example 2: Concept reasoning
-    std::cout << "\n=== Concept Reasoning ===" << std::endl;
-    std::vector<std::string> concepts = {"intelligence", "learning", "reasoning", "knowledge"};
-    std::string reasoning_result = cognitive_system.reason_about_concepts(concepts);
-    std::cout << "Reasoning about concepts: ";
-    for (const auto& concept : concepts) {
-        std::cout << concept << " ";
-    }
-    std::cout << std::endl;
-    std::cout << "Result: " << reasoning_result << std::endl;
-    
-    // Example 3: Pattern matching
-    std::cout << "\n=== Pattern Matching ===" << std::endl;
-    std::string pattern = "cognitive science";
-    std::string text1 = "The study of mind and intelligence in artificial systems";
-    std::string text2 = "Cooking recipes for dinner";
-    
-    bool match1 = cognitive_system.match_patterns(pattern, text1);
-    bool match2 = cognitive_system.match_patterns(pattern, text2);
-    
-    std::cout << "Pattern: '" << pattern << "'" << std::endl;
-    std::cout << "Text 1: '" << text1 << "' -> Match: " << (match1 ? "Yes" : "No") << std::endl;
-    std::cout << "Text 2: '" << text2 << "' -> Match: " << (match2 ? "Yes" : "No") << std::endl;
-    
-    // Example 4: Concept extraction
-    std::cout << "\n=== Concept Extraction ===" << std::endl;
-    std::string complex_text = "Machine learning algorithms can process large datasets to identify patterns and make predictions about future events.";
-    std::vector<std::string> extracted_concepts = cognitive_system.extract_concepts(complex_text);
-    
-    std::cout << "Text: " << complex_text << std::endl;
-    std::cout << "Extracted concepts: ";
-    for (const auto& concept : extracted_concepts) {
-        std::cout << concept << " ";
-    }
-    std::cout << std::endl;
-    
-    // Example 5: AtomSpace query processing
-    std::cout << "\n=== AtomSpace Query Processing ===" << std::endl;
-    std::string query = "What is the relationship between learning and intelligence?";
-    bool query_success = cognitive_system.process_atomspace_query(query);
-    std::cout << "Query: " << query << std::endl;
-    std::cout << "Processing successful: " << (query_success ? "Yes" : "No") << std::endl;
-    
-    std::cout << "\n=== Cognitive System Demo Complete ===" << std::endl;
     
     return 0;
 }
