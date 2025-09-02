@@ -4,14 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 
-// Basic GGML types and structures (simplified)
-enum ggml_type {
-    GGML_TYPE_F32,
-    GGML_TYPE_F16,
-    GGML_TYPE_Q4_0,
-    GGML_TYPE_Q4_1,
-    GGML_TYPE_Q8_0,
-};
+// Basic GGML structures (simplified)
 
 struct ggml_tensor {
     enum ggml_type type;
@@ -62,6 +55,11 @@ void ggml_opencog_free(struct ggml_context* ctx) {
     }
     
     free(ctx);
+}
+
+size_t ggml_opencog_get_mem_size(struct ggml_context* ctx) {
+    if (!ctx) return 0;
+    return ctx->mem_size;
 }
 
 // Tensor creation

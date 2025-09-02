@@ -15,6 +15,15 @@ extern "C" {
 #define GGML_OPENCOG_VERSION_MINOR 0
 #define GGML_OPENCOG_VERSION_PATCH 0
 
+// GGML types
+enum ggml_type {
+    GGML_TYPE_F32,
+    GGML_TYPE_F16,
+    GGML_TYPE_Q4_0,
+    GGML_TYPE_Q4_1,
+    GGML_TYPE_Q8_0,
+};
+
 // Forward declarations
 struct ggml_context;
 struct ggml_tensor;
@@ -23,6 +32,7 @@ struct ggml_cgraph;
 // Context management
 struct ggml_context* ggml_opencog_init(size_t mem_size);
 void ggml_opencog_free(struct ggml_context* ctx);
+size_t ggml_opencog_get_mem_size(struct ggml_context* ctx);
 
 // Tensor operations
 struct ggml_tensor* ggml_opencog_new_tensor_1d(
