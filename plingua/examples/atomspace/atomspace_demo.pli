@@ -1,0 +1,114 @@
+
+@model<atomspace_transition>
+
+// AtomSpace P-System Demo
+// Each atom is represented as a membrane with:
+// - Truth values as multiset objects 
+// - Attention values as membrane charges
+// - Connections as parent-child relationships
+
+@mu = [
+  // Concept nodes as elementary membranes
+  concept_dog[
+    node_type^1 name_hash^342 
+    truth_strength^80 truth_confidence^90
+    sti_units^150
+  ]'1,
+  
+  concept_animal[
+    node_type^1 name_hash^789
+    truth_strength^95 truth_confidence^85
+    sti_units^120
+  ]'2,
+  
+  concept_mammal[
+    node_type^1 name_hash^456
+    truth_strength^90 truth_confidence^80
+    sti_units^100
+  ]'3,
+  
+  // Inheritance link as compound membrane
+  inheritance_link[
+    link_arity^2 outgoing_0^1 outgoing_1^1
+    truth_strength^75 truth_confidence^85
+    sti_units^200
+    
+    // Contains the concept membranes
+    concept_dog[
+      node_type^1 name_hash^342
+      truth_strength^80 truth_confidence^90
+      incoming_connection^1
+    ]'1,
+    
+    concept_animal[
+      node_type^1 name_hash^789
+      truth_strength^95 truth_confidence^85
+      outgoing_connection^1
+    ]'2
+  ]+'4,
+  
+  // Similarity link membrane
+  similarity_link[
+    link_arity^2 outgoing_0^1 outgoing_1^1
+    truth_strength^60 truth_confidence^70
+    sti_units^80
+    
+    concept_dog[
+      similarity_boost^1
+      activation_spread^20
+    ]'1,
+    
+    concept_mammal[
+      similarity_boost^1
+      activation_spread^20
+    ]'3
+  ]'5
+]
+
+// Deduction inference rule
+// If we have P->Q and P is active, derive Q
+[ implication_active^1 antecedent_active^1 truth_strength^30 ]'4 
+-> [ consequent_derived^1 truth_strength^25 inference_trail^1 ]'4
+
+// Attention spreading rule
+// High STI atoms spread activation
+[ sti_units^100 activation_spread^10 ]'u
+-> [ sti_units^100 activation_spread^15 attention_boost^1 ]'u
+
+// Similarity propagation rule
+[ similarity_active^1 activation_spread^10 ]'5
+-> [ similarity_boost^1 activation_spread^15 ]'5
+
+// Forgetting rule - applied to all membranes
+[ truth_confidence^x truth_strength^y sti_units^z ]'u
+-> [ truth_confidence^(x-2) truth_strength^y sti_units^(z-5) ]'u
+
+// Truth value strengthening through repeated activation
+[ truth_strength^x activation_spread^10 ]'u
+-> [ truth_strength^(x+1) activation_spread^5 reinforcement^1 ]'u
+
+// Membrane dissolution for low attention atoms
+[ sti_units^x truth_confidence^y ]'u
+-> [ dissolved^1 ]'u
+:- x < 5, y < 10
+
+// Communication between similar concepts
+[ similarity_boost^1 ]'5 [ activation_spread^x ]'1
+-> [ similarity_boost^1 ]'5 [ activation_spread^(x+5) concept_related^1 ]'1
+
+// Pattern completion rule
+[ concept_dog node_type^1 ]'1 [ concept_animal outgoing_connection^1 ]'2
+-> [ concept_dog node_type^1 pattern_match^1 ]'1 [ concept_animal outgoing_connection^1 pattern_complete^1 ]'2
+
+@ms(deduction) = 10
+@ms(attention_spread) = 8  
+@ms(similarity_prop) = 6
+@ms(forgetting) = 3
+@ms(strengthening) = 7
+@ms(dissolution) = 1
+@ms(communication) = 5
+@ms(pattern_completion) = 9
+
+@d+deduction = attention_spread
+@d+similarity_prop = communication
+@d+pattern_completion = deduction

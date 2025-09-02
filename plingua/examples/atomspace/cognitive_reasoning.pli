@@ -1,0 +1,168 @@
+
+@model<cognitive_reasoning>
+
+// Cognitive Reasoning P-System
+// Models higher-level reasoning patterns using AtomSpace membranes
+// Implements PLN (Probabilistic Logic Networks) inference rules
+
+@mu = [
+  // Working memory - highly charged membranes
+  working_memory[
+    active_concepts^5 reasoning_context^3
+    attention_pool^1000 focus_duration^50
+    
+    // Current reasoning target
+    query_concept[
+      node_type^1 name_hash^123
+      truth_strength^70 truth_confidence^60
+      sti_units^300 query_active^1
+    ]'10,
+    
+    // Evidence concepts
+    evidence_1[
+      node_type^1 evidence_support^8
+      truth_strength^85 truth_confidence^80
+      sti_units^250
+    ]'11,
+    
+    evidence_2[
+      node_type^1 evidence_support^6
+      truth_strength^75 truth_confidence^70
+      sti_units^200
+    ]'12
+  ]+'100,
+  
+  // Long-term memory - stable knowledge base
+  knowledge_base[
+    stored_rules^20 learned_patterns^100
+    memory_stability^1 decay_resistance^1
+    
+    // Deduction rule knowledge
+    modus_ponens[
+      rule_type^1 logical_form^1
+      truth_strength^95 truth_confidence^90
+      sti_units^50 rule_ready^1
+    ]'20,
+    
+    // Abduction rule knowledge  
+    hypothesis_generation[
+      rule_type^2 creative_form^1
+      truth_strength^70 truth_confidence^60
+      sti_units^40 rule_ready^1
+    ]'21,
+    
+    // Induction rule knowledge
+    pattern_generalization[
+      rule_type^3 empirical_form^1
+      truth_strength^80 truth_confidence^75
+      sti_units^45 rule_ready^1
+    ]'22
+  ]'200,
+  
+  // Meta-cognitive control
+  executive_control[
+    strategy_selection^1 goal_monitoring^1
+    cognitive_load^3 processing_efficiency^8
+    
+    // Reasoning strategy selector
+    strategy_manager[
+      current_strategy^1 strategy_confidence^70
+      goal_progress^50 adaptation_rate^5
+      sti_units^150
+    ]'30
+  ]'300
+]
+
+// Deductive reasoning rule (Modus Ponens)
+// P->Q, P ⊢ Q with truth value revision
+[ rule_ready^1 logical_form^1 ]'20 
+[ query_active^1 truth_strength^x truth_confidence^y ]'10
+[ evidence_support^z ]'11
+-> [ rule_applied^1 logical_form^1 ]'20
+   [ conclusion_derived^1 truth_strength^(x*0.9) truth_confidence^(y*0.95) ]'10
+   [ evidence_used^1 evidence_support^z ]'11
+
+// Abductive reasoning rule (Hypothesis generation)
+// Q, P->Q ⊢ P (with lower confidence)
+[ rule_ready^1 creative_form^1 ]'21
+[ query_active^1 truth_strength^x ]'10
+[ evidence_support^z ]'11
+-> [ hypothesis_generated^1 creative_form^1 ]'21
+   [ potential_cause^1 truth_strength^(x*0.6) truth_confidence^50 ]'10
+   [ causal_link^1 evidence_support^z ]'11
+
+// Inductive reasoning rule (Pattern generalization)
+// Multiple instances ⊢ General rule
+[ rule_ready^1 empirical_form^1 ]'22
+[ evidence_support^x ]'11
+[ evidence_support^y ]'12
+-> [ pattern_found^1 empirical_form^1 generalization^1 ]'22
+   [ general_rule^1 truth_strength^70 truth_confidence^(min(x,y)*0.8) ]'10
+
+// Working memory attention management
+[ active_concepts^n attention_pool^x focus_duration^d ]'100
+-> [ active_concepts^(n+1) attention_pool^(x-50) focus_duration^(d-1) ]'100
+:- x > 100, d > 0
+
+// Memory consolidation (Working -> Long-term)
+[ conclusion_derived^1 truth_strength^x truth_confidence^y ]'10
+[ memory_stability^1 ]'200
+-> [ transferred_knowledge^1 ]'10
+   [ stored_concept^1 truth_strength^x truth_confidence^y memory_stability^1 ]'200
+
+// Strategy adaptation based on success
+[ strategy_confidence^c goal_progress^p ]'30
+[ rule_applied^1 ]'20
+-> [ strategy_confidence^(c+5) goal_progress^(p+10) adaptation_success^1 ]'30
+   [ rule_success^1 ]'20
+
+// Cognitive load monitoring
+[ cognitive_load^x processing_efficiency^e ]'300
+[ active_concepts^n ]'100
+-> [ cognitive_load^(x+1) processing_efficiency^(e-1) ]'300
+   [ load_increased^1 active_concepts^n ]'100
+:- n > 3
+
+// Meta-reasoning: Strategy switching under high load
+[ cognitive_load^x processing_efficiency^e ]'300
+[ current_strategy^s strategy_confidence^c ]'30
+-> [ cognitive_load^(x-2) processing_efficiency^(e+2) strategy_switch^1 ]'300
+   [ current_strategy^(s+1) strategy_confidence^60 ]'30
+:- x > 5, e < 5
+
+// Truth value revision through evidence accumulation
+[ truth_strength^x truth_confidence^y ]'10
+[ evidence_support^e1 ]'11
+[ evidence_support^e2 ]'12
+-> [ truth_strength^(x+(e1+e2)*0.1) truth_confidence^(y+5) evidence_integrated^1 ]'10
+   [ evidence_support^e1 used^1 ]'11
+   [ evidence_support^e2 used^1 ]'12
+
+// Attention decay for unused concepts
+[ sti_units^x evidence_support^y ]'u
+-> [ sti_units^(x-3) evidence_support^y attention_decay^1 ]'u
+:- x > 20
+
+// Knowledge retrieval from long-term memory
+[ query_active^1 ]'10
+[ stored_concept^1 truth_strength^x memory_stability^1 ]'200
+-> [ query_active^1 knowledge_retrieved^1 ]'10
+   [ stored_concept^1 truth_strength^x memory_stability^1 activated^1 ]'200
+
+@ms(modus_ponens) = 15
+@ms(abduction) = 12
+@ms(induction) = 10
+@ms(attention_mgmt) = 8
+@ms(consolidation) = 6
+@ms(strategy_adapt) = 7
+@ms(load_monitor) = 5
+@ms(meta_reasoning) = 9
+@ms(truth_revision) = 11
+@ms(attention_decay) = 3
+@ms(knowledge_retrieval) = 13
+
+@d+modus_ponens = knowledge_retrieval
+@d+abduction = attention_mgmt
+@d+induction = truth_revision
+@d+consolidation = meta_reasoning
+@d+strategy_adapt = load_monitor
