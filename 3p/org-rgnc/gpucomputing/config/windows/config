@@ -1,0 +1,28 @@
+## Requires to install openssh feature in Windows
+## Pay attention to the FIXME, delete them and replace
+## the required info as requested
+
+### First jumphost. Directly reachable (our login node)
+Host veleta
+        HostName GPU-RGNC #FIXME replace GPU-RGNC with our IP
+        User USER         #FIXME replace USER with your username
+        ProxyCommand none
+        ForwardAgent yes
+
+### Host to jump to via veleta
+#Host aneto  (temporarily unavailable)
+#        HostName aneto
+#        ProxyCommand C:\Windows\System32\OpenSSH\ssh.exe -q -W %h:%p veleta
+#        ServerAliveInterval 60
+		
+### Host to jump to via veleta
+Host mulhacen
+        HostName mulhacen
+        ProxyCommand C:\Windows\System32\OpenSSH\ssh.exe -q -W %h:%p veleta
+        ServerAliveInterval 60
+
+### Host to jump to via veleta
+Host teide
+        HostName teide
+        ProxyCommand C:\Windows\System32\OpenSSH\ssh.exe -q -W %h:%p veleta
+        ServerAliveInterval 60

@@ -1,0 +1,36 @@
+## Requires to install openssh
+### Pay attention to the FIXME, delete them and replace
+### the required info as requested
+
+#### First jumphost. Directly reachable (our login node)
+Host veleta
+	HostName GPU-RGNC #FIXME replace GPU-RGNC with our IP
+	User USER         #FIXME replace USER with your username
+	ProxyCommand none
+	ForwardAgent yes
+	GSSAPIAuthentication no
+
+### Host to jump to via veleta
+#Host aneto  (temporarily unavailable)
+#	HostName aneto
+#	ProxyCommand ssh veleta -W %h:%p
+#	ForwardAgent yes
+#	GSSAPIAuthentication no
+#        ServerAliveInterval 60
+	
+### Host to jump to via veleta
+Host mulhacen
+	HostName mulhacen
+	ProxyCommand ssh veleta -W %h:%p
+	ForwardAgent yes
+	GSSAPIAuthentication no
+        ServerAliveInterval 60
+	
+### Host to jump to via veleta
+Host teide
+	HostName teide
+	ProxyCommand ssh veleta -W %h:%p
+	ForwardAgent yes
+	GSSAPIAuthentication no        
+        ServerAliveInterval 60	
+

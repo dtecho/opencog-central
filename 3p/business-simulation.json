@@ -1,0 +1,330 @@
+{
+  "day": 1,
+  "time": 9,
+  "speed": 1,
+  "paused": true,
+  "employees": {
+    "emp-1": {
+      "id": "emp-1",
+      "name": "Alex Johnson",
+      "role": "Content Creator",
+      "department": "dept-1",
+      "skills": {
+        "communication": 71,
+        "teamwork": 62,
+        "problemSolving": 59,
+        "adaptability": 77,
+        "creativity": 77,
+        "marketing": 95,
+        "writing": 73,
+        "analytics": 70
+      },
+      "mood": 78,
+      "energy": 70,
+      "productivity": 81,
+      "salary": 67704,
+      "relationships": {}
+    },
+    "emp-2": {
+      "id": "emp-2",
+      "name": "Taylor Smith",
+      "role": "Social Media Manager",
+      "department": "dept-1",
+      "skills": {
+        "communication": 63,
+        "teamwork": 45,
+        "problemSolving": 70,
+        "adaptability": 44,
+        "creativity": 83,
+        "marketing": 89,
+        "writing": 84,
+        "analytics": 59
+      },
+      "mood": 77,
+      "energy": 75,
+      "productivity": 76,
+      "salary": 112698,
+      "relationships": {}
+    },
+    "emp-3": {
+      "id": "emp-3",
+      "name": "Jordan Williams",
+      "role": "Marketing Specialist",
+      "department": "dept-1",
+      "skills": {
+        "communication": 56,
+        "teamwork": 72,
+        "problemSolving": 78,
+        "adaptability": 59,
+        "creativity": 79,
+        "marketing": 84,
+        "writing": 60,
+        "analytics": 51
+      },
+      "mood": 74,
+      "energy": 98,
+      "productivity": 88,
+      "salary": 82137,
+      "relationships": {}
+    },
+    "emp-4": {
+      "id": "emp-4",
+      "name": "Casey Brown",
+      "role": "Junior Developer",
+      "department": "dept-2",
+      "skills": {
+        "communication": 40,
+        "teamwork": 61,
+        "problemSolving": 60,
+        "adaptability": 56,
+        "coding": 92,
+        "debugging": 87,
+        "systemDesign": 85
+      },
+      "mood": 89,
+      "energy": 76,
+      "productivity": 80,
+      "salary": 57769,
+      "relationships": {}
+    },
+    "emp-5": {
+      "id": "emp-5",
+      "name": "Morgan Davis",
+      "role": "QA Engineer",
+      "department": "dept-2",
+      "skills": {
+        "communication": 51,
+        "teamwork": 70,
+        "problemSolving": 56,
+        "adaptability": 74,
+        "coding": 86,
+        "debugging": 86,
+        "systemDesign": 53
+      },
+      "mood": 79,
+      "energy": 86,
+      "productivity": 65,
+      "salary": 40317,
+      "relationships": {}
+    },
+    "emp-6": {
+      "id": "emp-6",
+      "name": "Riley Wilson",
+      "role": "Senior Developer",
+      "department": "dept-2",
+      "skills": {
+        "communication": 62,
+        "teamwork": 40,
+        "problemSolving": 61,
+        "adaptability": 55,
+        "coding": 85,
+        "debugging": 74,
+        "systemDesign": 66,
+        "leadership": 77,
+        "mentoring": 75
+      },
+      "mood": 60,
+      "energy": 84,
+      "productivity": 78,
+      "salary": 104658,
+      "relationships": {}
+    },
+    "emp-7": {
+      "id": "emp-7",
+      "name": "Jamie Miller",
+      "role": "Recruiter",
+      "department": "dept-3",
+      "skills": {
+        "communication": 43,
+        "teamwork": 63,
+        "problemSolving": 61,
+        "adaptability": 40,
+        "empathy": 70,
+        "judgment": 70,
+        "negotiation": 60,
+        "organization": 76
+      },
+      "mood": 64,
+      "energy": 90,
+      "productivity": 77,
+      "salary": 82787,
+      "relationships": {}
+    },
+    "emp-8": {
+      "id": "emp-8",
+      "name": "Avery Moore",
+      "role": "Financial Analyst",
+      "department": "dept-3",
+      "skills": {
+        "communication": 40,
+        "teamwork": 41,
+        "problemSolving": 63,
+        "adaptability": 62,
+        "finance": 86,
+        "analysis": 75,
+        "attention": 78,
+        "planning": 75
+      },
+      "mood": 66,
+      "energy": 72,
+      "productivity": 90,
+      "salary": 64214,
+      "relationships": {}
+    },
+    "emp-9": {
+      "id": "emp-9",
+      "name": "Quinn Thomas",
+      "role": "Accountant",
+      "department": "dept-4",
+      "skills": {
+        "communication": 42,
+        "teamwork": 75,
+        "problemSolving": 60,
+        "adaptability": 47,
+        "finance": 95,
+        "analysis": 70,
+        "attention": 80,
+        "planning": 66
+      },
+      "mood": 80,
+      "energy": 70,
+      "productivity": 72,
+      "salary": 108974,
+      "relationships": {}
+    },
+    "emp-10": {
+      "id": "emp-10",
+      "name": "Jordan Anderson",
+      "role": "Accountant",
+      "department": "dept-4",
+      "skills": {
+        "communication": 68,
+        "teamwork": 69,
+        "problemSolving": 62,
+        "adaptability": 68,
+        "finance": 81,
+        "analysis": 76,
+        "attention": 75,
+        "planning": 77
+      },
+      "mood": 79,
+      "energy": 78,
+      "productivity": 75,
+      "salary": 81201,
+      "relationships": {}
+    }
+  },
+  "departments": {
+    "dept-1": {
+      "id": "dept-1",
+      "name": "Marketing",
+      "budget": 50000,
+      "efficiency": 75,
+      "employees": [
+        "emp-1",
+        "emp-2",
+        "emp-3"
+      ]
+    },
+    "dept-2": {
+      "id": "dept-2",
+      "name": "Development",
+      "budget": 80000,
+      "efficiency": 80,
+      "employees": [
+        "emp-4",
+        "emp-5",
+        "emp-6"
+      ]
+    },
+    "dept-3": {
+      "id": "dept-3",
+      "name": "Human Resources",
+      "budget": 40000,
+      "efficiency": 70,
+      "employees": [
+        "emp-7",
+        "emp-8"
+      ]
+    },
+    "dept-4": {
+      "id": "dept-4",
+      "name": "Finance",
+      "budget": 60000,
+      "efficiency": 85,
+      "employees": [
+        "emp-9",
+        "emp-10"
+      ]
+    }
+  },
+  "tasks": {
+    "task-1": {
+      "id": "task-1",
+      "name": "Social Media Campaign",
+      "description": "Create and launch a social media campaign for our new product",
+      "difficulty": 60,
+      "requiredSkills": {
+        "marketing": 50,
+        "creativity": 70
+      },
+      "assignedTo": "emp-1",
+      "progress": 25,
+      "deadline": 1747855252668,
+      "reward": 5000
+    },
+    "task-2": {
+      "id": "task-2",
+      "name": "Bug Fixing Sprint",
+      "description": "Fix critical bugs in the main application",
+      "difficulty": 75,
+      "requiredSkills": {
+        "coding": 80,
+        "problemSolving": 70
+      },
+      "assignedTo": "emp-4",
+      "progress": 10,
+      "deadline": 1747768852668,
+      "reward": 8000
+    },
+    "task-3": {
+      "id": "task-3",
+      "name": "Quarterly Budget Review",
+      "description": "Review and optimize the quarterly budget",
+      "difficulty": 65,
+      "requiredSkills": {
+        "finance": 75,
+        "analysis": 60
+      },
+      "assignedTo": "emp-9",
+      "progress": 5,
+      "deadline": 1748028052668,
+      "reward": 6000
+    },
+    "task-4": {
+      "id": "task-4",
+      "name": "Recruitment Drive",
+      "description": "Find and interview candidates for open positions",
+      "difficulty": 50,
+      "requiredSkills": {
+        "communication": 70,
+        "judgment": 65
+      },
+      "assignedTo": "emp-8",
+      "progress": 30,
+      "deadline": 1748200852668,
+      "reward": 4500
+    }
+  },
+  "metrics": {
+    "revenue": 120000,
+    "expenses": 90000,
+    "productivity": 75,
+    "employeeSatisfaction": 70,
+    "customerSatisfaction": 80
+  },
+  "selectedEmployeeId": null,
+  "selectedDepartmentId": null,
+  "selectedTaskId": null,
+  "funds": 500000
+}
