@@ -1,0 +1,95 @@
+~/workspace$ cd ggml && mkdir build && cd build && cmake .. && make
+mkdir: cannot create directory ‘build’: File exists
+~/workspace/ggml$ cd build && cmake .. && make
+cmake: command not installed. Multiple versions of this command were found in Nix.
+Select one to run (or press Ctrl-C to cancel):
+cmake                    3.31.6  Cross-platform, open-source build system generator
+Adding cmake to .replit
+-- The C compiler identification is Clang 14.0.6
+-- The CXX compiler identification is Clang 14.0.6
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /nix/store/gnqvmr5fm2lpaq767834xc42z1qgx5ka-clang-wrapper-14.0.6/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /nix/store/gnqvmr5fm2lpaq767834xc42z1qgx5ka-clang-wrapper-14.0.6/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found PkgConfig: /nix/store/d667kdfbfn17905f7kmdl33r9gvwzaji-pkg-config-wrapper-0.29.2/bin/pkg-config (found version "0.29.2")
+-- Could NOT find OpenMP_C (missing: OpenMP_C_FLAGS OpenMP_C_LIB_NAMES) 
+-- Could NOT find OpenMP_CXX (missing: OpenMP_CXX_FLAGS OpenMP_CXX_LIB_NAMES) 
+-- Could NOT find OpenMP (missing: OpenMP_C_FOUND OpenMP_CXX_FOUND) 
+-- Configuring done (8.0s)
+CMake Error at examples/CMakeLists.txt:9 (add_executable):
+  Cannot find source file:
+
+    gpt2_inference.c
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm
+  .ccm .cxxm .c++m .h .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90
+  .f95 .f03 .hip .ispc
+
+
+CMake Error at examples/CMakeLists.txt:13 (add_executable):
+  Cannot find source file:
+
+    benchmark.c
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm
+  .ccm .cxxm .c++m .h .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90
+  .f95 .f03 .hip .ispc
+
+
+CMake Error at tests/CMakeLists.txt:7 (add_executable):
+  Cannot find source file:
+
+    test_tensor_ops.c
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm
+  .ccm .cxxm .c++m .h .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90
+  .f95 .f03 .hip .ispc
+
+
+CMake Error at tests/CMakeLists.txt:12 (add_executable):
+  Cannot find source file:
+
+    test_quantization.c
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm
+  .ccm .cxxm .c++m .h .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90
+  .f95 .f03 .hip .ispc
+
+
+CMake Error at tests/CMakeLists.txt:17 (add_executable):
+  Cannot find source file:
+
+    test_backends.c
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm
+  .ccm .cxxm .c++m .h .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90
+  .f95 .f03 .hip .ispc
+
+
+CMake Error at examples/CMakeLists.txt:9 (add_executable):
+  No SOURCES given to target: gpt2_inference
+
+
+CMake Error at examples/CMakeLists.txt:13 (add_executable):
+  No SOURCES given to target: benchmark
+
+
+CMake Error at tests/CMakeLists.txt:7 (add_executable):
+  No SOURCES given to target: test_tensor_ops
+
+
+CMake Error at tests/CMakeLists.txt:12 (add_executable):
+  No SOURCES given to target: test_quantization
+
+
+CMake Error at tests/CMakeLists.txt:17 (add_executable):
+  No SOURCES given to target: test_backends
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.

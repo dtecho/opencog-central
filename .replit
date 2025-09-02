@@ -3,7 +3,7 @@ run = "node index.js"
 
 [nix]
 channel = "stable-25_05"
-packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "libxcrypt", "libyaml", "pkg-config", "python312Packages.pip", "qhull", "tcl", "tk", "xsimd"]
+packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "libxcrypt", "libyaml", "pkg-config", "python312Packages.pip", "qhull", "tcl", "tk", "xsimd", "cmake"]
 
 [deployment]
 run = ["sh", "-c", "node index.js"]
