@@ -9,7 +9,7 @@ packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "SkinTwin System"
+runButton = "NiFi System"
 
 [[workflows.workflow]]
 name = "SkinTwin System"
@@ -28,3 +28,16 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd kobold-cpp && python scripts/run_koboldcpp.py --model /path/to/model.gguf --port 5001"
+
+[[workflows.workflow]]
+name = "NiFi System"
+author = 39128348
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pip install -r nifi/requirements.txt"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python nifi/main.py --port 8080"

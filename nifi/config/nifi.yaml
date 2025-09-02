@@ -1,0 +1,46 @@
+
+# Apache NiFi Configuration for OpenCog Integration
+
+server:
+  port: 8080
+  host: "0.0.0.0"
+  
+atomspace:
+  host: "localhost"
+  port: 17001
+  timeout: 30
+  
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+flows:
+  max_concurrent: 10
+  default_timeout: 300
+  
+processors:
+  thread_pool_size: 4
+  max_memory_mb: 1024
+  
+cognitive:
+  reasoning:
+    confidence_threshold: 0.5
+    max_inference_depth: 5
+  
+  pattern_matching:
+    similarity_threshold: 0.7
+    max_patterns: 1000
+    
+  memory:
+    cache_size_mb: 256
+    persistence_enabled: true
+
+templates:
+  - name: "simple_logging"
+    description: "Basic data generation and logging"
+    
+  - name: "atomspace_integration" 
+    description: "AtomSpace read/write operations"
+    
+  - name: "cognitive_pipeline"
+    description: "Complete cognitive processing workflow"
