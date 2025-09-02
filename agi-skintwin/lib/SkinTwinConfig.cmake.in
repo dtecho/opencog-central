@@ -19,3 +19,32 @@ SET(SKINTWIN_DATA_DIR "@CMAKE_INSTALL_PREFIX@/share/opencog/skintwin")
 
 # Python modules
 SET(SKINTWIN_PYTHON_DIR "@CMAKE_INSTALL_PREFIX@/lib/python@Python3_VERSION_MAJOR@.@Python3_VERSION_MINOR@/site-packages")
+# SkinTwin CMake configuration file
+
+@PACKAGE_INIT@
+
+# Version information
+set(SkinTwin_VERSION "@SEMANTIC_VERSION@")
+set(SkinTwin_VERSION_MAJOR "@SEMANTIC_VERSION_MAJOR@")
+set(SkinTwin_VERSION_MINOR "@SEMANTIC_VERSION_MINOR@")
+set(SkinTwin_VERSION_PATCH "@SEMANTIC_VERSION_PATCH@")
+
+# Paths
+set_and_check(SkinTwin_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_PREFIX@/include")
+set_and_check(SkinTwin_LIB_DIR "@PACKAGE_CMAKE_INSTALL_PREFIX@/lib")
+set_and_check(SkinTwin_CMAKE_DIR "@PACKAGE_CMAKE_INSTALL_PREFIX@/lib/cmake/SkinTwin")
+
+# Dependencies
+find_dependency(CogUtil REQUIRED)
+find_dependency(AtomSpace REQUIRED)
+find_dependency(Boost REQUIRED COMPONENTS system filesystem thread)
+find_dependency(Python3 COMPONENTS Interpreter Development REQUIRED)
+
+# Import targets
+include("${CMAKE_CURRENT_LIST_DIR}/SkinTwinTargets.cmake")
+
+# Compatibility
+set(SkinTwin_LIBRARIES SkinTwin::skintwin-core)
+set(SkinTwin_INCLUDE_DIRS ${SkinTwin_INCLUDE_DIR})
+
+check_required_components(SkinTwin)

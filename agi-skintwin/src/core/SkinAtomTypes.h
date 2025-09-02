@@ -51,3 +51,55 @@ namespace opencog {
 } // namespace opencog
 
 #endif // SKIN_ATOM_TYPES_H
+#ifndef _SKIN_ATOM_TYPES_H
+#define _SKIN_ATOM_TYPES_H
+
+#include <opencog/atoms/atom_types/atom_types.h>
+
+namespace skintwin {
+
+// Skin-specific atom types
+enum SkinAtomType {
+    // Molecular scale types
+    MOLECULE_NODE = CONCEPT_NODE,
+    PROTEIN_NODE = CONCEPT_NODE,
+    LIPID_NODE = CONCEPT_NODE,
+    
+    // Cellular scale types  
+    CELL_NODE = CONCEPT_NODE,
+    KERATINOCYTE_NODE = CONCEPT_NODE,
+    FIBROBLAST_NODE = CONCEPT_NODE,
+    MELANOCYTE_NODE = CONCEPT_NODE,
+    
+    // Tissue scale types
+    TISSUE_NODE = CONCEPT_NODE,
+    EPIDERMIS_NODE = CONCEPT_NODE,
+    DERMIS_NODE = CONCEPT_NODE,
+    HYPODERMIS_NODE = CONCEPT_NODE,
+    
+    // Interaction types
+    MOLECULAR_INTERACTION_LINK = EVALUATION_LINK,
+    CELLULAR_INTERACTION_LINK = EVALUATION_LINK,
+    TISSUE_INTERACTION_LINK = EVALUATION_LINK,
+    
+    // Process types
+    BIOLOGICAL_PROCESS_LINK = EVALUATION_LINK,
+    CHEMICAL_REACTION_LINK = EVALUATION_LINK,
+    TRANSPORT_PROCESS_LINK = EVALUATION_LINK
+};
+
+// Skin-specific predicate names
+extern const std::string SKIN_PREDICATES[];
+
+// Initialize skin-specific atom types
+void init_skin_atom_types();
+
+// Helper functions for skin atom type checking
+bool is_skin_molecule(opencog::Type type);
+bool is_skin_cell(opencog::Type type);
+bool is_skin_tissue(opencog::Type type);
+bool is_skin_interaction(opencog::Type type);
+
+} // namespace skintwin
+
+#endif // _SKIN_ATOM_TYPES_H
