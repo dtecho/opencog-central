@@ -105,3 +105,100 @@ void generate(Transformer* transformer, Tokenizer* tokenizer, char* prompt, int 
 #endif
 
 #endif // LLM_CORE_H
+#ifndef LLM_CORE_H
+#define LLM_CORE_H
+
+#include <stdint.h>
+#include <stddef.h>
+
+// Forward declarations
+typedef struct transformer_config transformer_config_t;
+typedef struct memory_pool memory_pool_t;
+typedef struct adam_optimizer adam_optimizer_t;
+
+// Configuration structure
+struct transformer_config {
+    int vocab_size;
+    int d_model;
+    int n_layers;
+    int n_heads;
+    int seq_len;
+    int d_ff;
+    float dropout;
+};
+
+// Core transformer functions
+int transformer_forward(const transformer_config_t* config, 
+                       const float* weights,
+                       const int* input_ids,
+                       float* output,
+                       int batch_size,
+                       int seq_len);
+
+// Memory management
+memory_pool_t* create_memory_pool(size_t size);
+void* pool_alloc(memory_pool_t* pool, size_t size);
+void destroy_memory_pool(memory_pool_t* pool);
+
+#ifdef USE_CUDA
+int cuda_malloc(void** ptr, size_t size);
+int cuda_free(void* ptr);
+int cuda_memcpy_h2d(void* dst, const void* src, size_t size);
+int cuda_memcpy_d2h(void* dst, const void* src, size_t size);
+#endif
+
+// Attention mechanisms
+void scaled_dot_product_attention(const float* queries, const float* keys,
+                                 const float* values, float* output,
+                                 int seq_len, int d_model, float scale);
+
+void multi_head_attention(const float* input, float* output,
+                         const float* wq, const float* wk, const float* wv,
+                         const float* wo, int seq_len, int d_model, int num_heads);
+
+// Activation functions
+void relu(const float* input, float* output, int size);
+void gelu(const float* input, float* output, int size);
+void swish(const float* input, float* output, int size);
+void softmax(const float* input, float* output, int size);
+void layer_norm(const float* input, float* output, const float* gamma,
+                const float* beta, int size, float eps);
+
+// Optimization
+adam_optimizer_t* create_adam_optimizer(int param_count, float lr,
+                                       float beta1, float beta2, float eps);
+void adam_step(adam_optimizer_t* opt, float* params, const float* gradients,
+               int param_count);
+void destroy_adam_optimizer(adam_optimizer_t* opt);
+
+// Model I/O
+int save_model(const char* filename, const transformer_config_t* config,
+               const float* weights, size_t weight_count);
+int load_model(const char* filename, transformer_config_t* config,
+               float** weights, size_t* weight_count);
+size_t calculate_weight_count(const transformer_config_t* config);
+
+// Quantization
+void quantize_int8(const float* input, int8_t* output, float* scale, int size);
+void dequantize_int8(const int8_t* input, float* output, float scale, int size);
+void quantize_int4_packed(const float* input, uint8_t* output, float* scale, int size);
+
+// Tokenization
+typedef struct tokenizer tokenizer_t;
+
+tokenizer_t* create_tokenizer(const char* vocab_file);
+int tokenize(tokenizer_t* tok, const char* text, int* tokens, int max_tokens);
+char* detokenize(tokenizer_t* tok, const int* tokens, int num_tokens);
+void destroy_tokenizer(tokenizer_t* tok);
+
+// Sampling
+int sample_token(const float* logits, int vocab_size, float temperature, float top_p);
+void generate_text(const transformer_config_t* config, const float* weights,
+                   tokenizer_t* tokenizer, const char* prompt, char* output,
+                   int max_tokens, float temperature, float top_p);
+
+// Utility functions
+void matrix_multiply(const float* a, const float* b, float* c, 
+                    int m, int n, int k);
+
+#endif // LLM_CORE_H

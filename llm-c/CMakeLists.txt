@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.12)
 project(llm-c VERSION 1.0.0 LANGUAGES C CXX)
 
@@ -21,12 +20,11 @@ add_library(llm-c ${SOURCES})
 # Link against system libraries
 target_link_libraries(llm-c m)
 
-# Examples
+# Add subdirectories
+add_subdirectory(src)
 add_subdirectory(examples)
-
-# Tests
-enable_testing()
 add_subdirectory(tests)
+add_subdirectory(benchmarks)
 
 # Install targets
 install(TARGETS llm-c DESTINATION lib)
