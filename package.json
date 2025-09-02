@@ -1,5 +1,12 @@
 {
   "dependencies": {
-    "fs-extra": "^11.2.0"
+    "flask": "^0.2.10",
+    "flask-cors": "^0.0.1",
+    "fs-extra": "^11.2.0",
+    "networkx": "^0.0.1-security",
+    "numpy": "^0.0.1",
+    "pyyaml": "^0.0.1",
+    "requests": "^0.3.0",
+    "scipy": "^0.1.4"
   }
 }
