@@ -41,3 +41,12 @@ args = "pip install -r nifi/requirements.txt"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python nifi/main.py --port 8080"
+
+[[workflows.workflow]]
+name = "AI/ML Integration Demo"
+author = 39128348
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python examples/ai_ml_integration_demo.py"
