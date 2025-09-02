@@ -1,0 +1,32 @@
+
+@model<attention>
+
+@mu = [
+    [
+        []'focus,active
+    ]'working_memory
+    [
+        []'stored,inactive
+    ]'long_term_memory
+]'cognitive_system
+
+r1: focus -> focus,focus
+r2: focus,stimulus -> active,focus
+r3: active -> stored
+r4: [focus]'working_memory -> focus[]'working_memory
+r5: [stored]'long_term_memory -> stored[]'long_term_memory
+r6: stimulus[]'cognitive_system -> []'stimulus,cognitive_system
+
+@ms(r1) = 2
+@ms(r2) = 1
+@ms(r3) = 3
+@ms(r4) = 1
+@ms(r5) = 1
+@ms(r6) = 1
+
+@d+r1 = (focus,here)
+@d+r2 = (focus,here), (stimulus,here)
+@d+r3 = (active,here)
+@d+r4 = (focus,here)
+@d+r5 = (stored,here)
+@d+r6 = (stimulus,here)

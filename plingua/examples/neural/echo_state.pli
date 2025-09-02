@@ -1,0 +1,35 @@
+
+@model<echo_state>
+
+@mu = [
+    [
+        []'input_signal
+    ]'input_layer
+    [
+        []'reservoir_state,connection
+    ]'reservoir
+    [
+        []'output_weight
+    ]'output_layer
+]'neural_network
+
+r1: input_signal,connection -> activation,connection
+r2: activation,reservoir_state -> new_state,activation
+r3: new_state,output_weight -> output_signal
+r4: [output_signal]'output_layer -> output_signal[]'output_layer
+r5: reservoir_state -> decay_state
+r6: decay_state,activation -> updated_state
+
+@ms(r1) = 1
+@ms(r2) = 1
+@ms(r3) = 1
+@ms(r4) = 1
+@ms(r5) = 2
+@ms(r6) = 1
+
+@d+r1 = (input_signal,in), (connection,here)
+@d+r2 = (activation,in), (reservoir_state,here)
+@d+r3 = (new_state,in), (output_weight,here)
+@d+r4 = (output_signal,here)
+@d+r5 = (reservoir_state,here)
+@d+r6 = (decay_state,here), (activation,in)

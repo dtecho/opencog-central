@@ -1,0 +1,29 @@
+
+@model<cell_division>
+
+@mu = [
+    [
+        []'dna,protein,energy
+    ]'nucleus
+    [
+        []'organelle,metabolism
+    ]'cytoplasm
+]'cell
+
+r1: dna,energy -> dna,dna,protein
+r2: protein,organelle -> organelle,organelle
+r3: metabolism,energy -> energy,energy,waste
+r4: [dna,dna]'nucleus -> [dna]'nucleus [dna]'nucleus
+r5: waste[]'cell -> []'cell
+
+@ms(r1) = 1
+@ms(r2) = 1
+@ms(r3) = 1
+@ms(r4) = 1
+@ms(r5) = 1
+
+@d+r1 = (dna,here), (energy,here)
+@d+r2 = (protein,here), (organelle,in)
+@d+r3 = (metabolism,here), (energy,here)
+@d+r4 = (dna,here), (dna,here)
+@d+r5 = (waste,here)

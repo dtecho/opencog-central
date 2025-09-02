@@ -1,0 +1,27 @@
+
+@model<evolution>
+
+@mu = [
+    []'1,2,3
+    [
+        []'4,5
+    ]'6,7
+    [
+        []'8,9
+    ]'10,11
+]'12,13
+
+r1: [x]'i -> [x,x]'i
+r2: [x,y]'i -> [z]'i
+r3: x[]'i -> []'x,i
+r4: [x]'i [y]'j -> [x,y]'i []'j
+
+@ms(r1) = 3
+@ms(r2) = 2
+@ms(r3) = 1
+@ms(r4) = 1
+
+@d+r1 = (x,here)
+@d+r2 = (x,here), (y,here)
+@d+r3 = (x,here)
+@d+r4 = (x,here), (y,in)

@@ -1,0 +1,26 @@
+
+@model<division>
+
+@mu = [
+    [
+        []'a,b,c
+    ]'d,e
+]'0
+
+r1: a -> a,a
+r2: b -> b,b  
+r3: c -> c,c
+r4: d -> d,d
+r5: e -> e,e
+r6: [a]'i -> a[]'i
+r7: [b]'i -> b[]'i
+r8: [c]'i -> c[]'i
+
+@d+r1 = (a,here)
+@d+r2 = (b,here)
+@d+r3 = (c,here)
+@d+r4 = (d,here)
+@d+r5 = (e,here)
+@d+r6 = (a,here)
+@d+r7 = (b,here)
+@d+r8 = (c,here)

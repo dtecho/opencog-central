@@ -1,0 +1,32 @@
+
+@model<reasoning>
+
+@mu = [
+    [
+        []'premise1,premise2
+    ]'knowledge_base
+    [
+        []'query
+    ]'working_memory
+    [
+        []'
+    ]'inference_engine
+]'reasoning_system
+
+r1: premise1,premise2 -> conclusion
+r2: query,premise1 -> partial_answer
+r3: partial_answer,conclusion -> final_answer
+r4: [conclusion]'knowledge_base -> conclusion[]'knowledge_base
+r5: [final_answer]'working_memory -> final_answer[]'working_memory
+
+@ms(r1) = 1
+@ms(r2) = 1
+@ms(r3) = 1
+@ms(r4) = 1
+@ms(r5) = 1
+
+@d+r1 = (premise1,here), (premise2,here)
+@d+r2 = (query,here), (premise1,in)
+@d+r3 = (partial_answer,here), (conclusion,in)
+@d+r4 = (conclusion,here)
+@d+r5 = (final_answer,here)
