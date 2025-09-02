@@ -18,6 +18,19 @@ add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(tools)
 
+# Optional Python bindings
+option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
+if(BUILD_PYTHON_BINDINGS)
+    add_subdirectory(bindings/python)
+endif()
+
+# Optional tests
+option(BUILD_TESTS "Build tests" OFF)
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
 # Optional: Add tests if needed
 if(BUILD_TESTING)
     add_subdirectory(tests)
