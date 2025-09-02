@@ -1,0 +1,62 @@
+
+# SkinTwin-ASI Configuration File
+
+system:
+  name: "SkinTwin-ASI"
+  version: "0.1.0"
+  debug: true
+  log_level: "INFO"
+
+atomspace:
+  backend: "opencog"
+  persistence: false
+  cleanup_on_exit: true
+
+multiscale_model:
+  scales:
+    - molecular
+    - cellular  
+    - tissue
+    - organ
+  
+  molecular:
+    components:
+      - collagen
+      - keratin
+      - elastin
+      - hyaluronic_acid
+      
+  cellular:
+    components:
+      - keratinocyte
+      - melanocyte
+      - fibroblast
+      
+  tissue:
+    components:
+      - epidermis
+      - dermis
+      - hypodermis
+
+biological_integration:
+  agi_bio_path: "./agi-bio"
+  load_on_startup: true
+  
+chemical_integration:
+  cheminformatics_path: "./cheminformatics"
+  load_on_startup: true
+
+web_interface:
+  enabled: true
+  host: "0.0.0.0"
+  port: 5000
+  debug: true
+
+ai_agents:
+  deep_tree_echo:
+    enabled: true
+    config_path: "./config/deep_tree_echo.yaml"
+  
+  marduk:
+    enabled: true
+    config_path: "./config/marduk.yaml"
