@@ -50,3 +50,6 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python examples/ai_ml_integration_demo.py"
+
+[agent]
+expertMode = true
