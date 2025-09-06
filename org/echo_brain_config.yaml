@@ -118,6 +118,63 @@ brain_regions:
       - "thalamus"
       - "cerebellum"
 
+  reticular_activation_system:
+    primary_system: "attention"
+    components:
+      - "attention/AFImportanceDiffusionAgent"
+      - "attention/AFRentCollectionAgent" 
+      - "attentionbank"
+      - "cogserver"
+    function: "attention_filtering"
+    activation_threshold: 0.6
+    connections:
+      - "thalamus"
+      - "frontal_cortex"
+      - "brain_stem"
+      - "hypothalamus"
+
+  hypothalamus:
+    primary_system: "openpsi/dynamics"
+    components:
+      - "opencog/openpsi/dynamics"
+      - "ros-behavior-scripting/sensors/affect"
+      - "ros-behavior-scripting/sensors/control_psi"
+    function: "homeostatic_control"
+    activation_threshold: 0.5
+    connections:
+      - "brain_stem"
+      - "pituitary"
+      - "reticular_activation_system"
+      - "thalamus"
+
+  pituitary:
+    primary_system: "openpsi"
+    components:
+      - "opencog/openpsi"
+      - "ros-behavior-scripting/sensors/affect" 
+      - "atomspace/persist"
+      - "cogserver/network"
+    function: "endocrine_coordination"
+    activation_threshold: 0.4
+    connections:
+      - "hypothalamus"
+      - "pineal"
+      - "all_systems"  # Broadcasts to all systems
+
+  pineal:
+    primary_system: "temporal_coordination"
+    components:
+      - "opencog/openpsi/dynamics"
+      - "learn"
+      - "miner"
+      - "cogserver"
+    function: "circadian_intuitive"
+    activation_threshold: 0.3
+    connections:
+      - "pituitary"
+      - "thalamus"
+      - "frontal_cortex"
+
 echo_integrations:
   deep_tree_echo:
     location: "3p/aphroditecho"
@@ -163,6 +220,24 @@ connection_pathways:
       - ["frontal_cortex", "cerebellum", 0.4]
       - ["hippocampus", "parietal_lobe", 0.5]
       - ["cerebellum", "parietal_lobe", 0.4]
+
+    subcortical_regulation:
+      - ["reticular_activation_system", "frontal_cortex", 0.8]
+      - ["reticular_activation_system", "thalamus", 0.9]
+      - ["hypothalamus", "brain_stem", 0.9]
+      - ["hypothalamus", "pituitary", 0.9]
+      - ["pituitary", "pineal", 0.6]
+      - ["pineal", "thalamus", 0.5]
+
+    attention_modulation:
+      - ["reticular_activation_system", "all_cortical", 0.7]
+      - ["hypothalamus", "reticular_activation_system", 0.8]
+      - ["pituitary", "hypothalamus", 0.8]
+
+    temporal_coordination:
+      - ["pineal", "all_systems", 0.3]
+      - ["pineal", "hippocampus", 0.6]
+      - ["pineal", "frontal_cortex", 0.5]
 
 system_parameters:
   update_frequency: 10  # Hz

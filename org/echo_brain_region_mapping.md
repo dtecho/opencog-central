@@ -126,6 +126,101 @@ ros-behavior-scripting/sensors/
 cogserver/lib/opencog.conf
 ```
 
+### 9. Reticular Activation System (RAS) - Attention Filtering
+**Location**: `attention/` - ECAN attention allocation system
+**Function**: Selective attention, salience filtering, vigilance control
+**Integration Points**:
+- `attention/opencog/attention/AttentionModule.cc` - Primary attention control
+- `cogserver/` - Global attention coordination
+- `opencog/openpsi/` - Goal-directed attention modulation
+- `ros-behavior-scripting/sensors/` - Sensory attention filtering
+
+**Key Files**:
+```
+attention/opencog/attention/AFImportanceDiffusionAgent.cc
+attention/opencog/attention/AFRentCollectionAgent.cc
+attention/opencog/attentionbank/bank/AttentionBank.cc
+cogserver/opencog/cogserver/modules/CommandRequestProcessor.cc
+```
+
+**Special Functions**:
+- **Salience Detection**: Filters incoming stimuli based on relevance and urgency
+- **Vigilance Control**: Modulates system-wide alertness levels
+- **Context Switching**: Manages transitions between different attention states
+- **Novelty Detection**: Identifies unexpected or important changes in the environment
+
+### 10. Hypothalamus - Homeostatic Control Center
+**Location**: `opencog/openpsi/dynamics/` - Drive dynamics and homeostasis
+**Function**: Maintains system homeostasis, regulates basic drives, controls autonomic functions
+**Integration Points**:
+- `opencog/openpsi/OpenPsiRules.cc` - Drive rule management
+- `ros-behavior-scripting/sensors/affect.py` - Emotional regulation
+- `ros-behavior-scripting/sensors/control.py` - Autonomic control
+- System resource monitoring and management
+
+**Key Files**:
+```
+opencog/opencog/openpsi/dynamics/
+ros-behavior-scripting/sensors/affect.py
+ros-behavior-scripting/sensors/control_psi.py
+cogserver/lib/opencog.conf
+```
+
+**Drive Systems**:
+- **Hunger/Energy**: System resource allocation and management
+- **Safety/Security**: Threat detection and defensive behaviors
+- **Social Drives**: Interaction seeking and social bonding
+- **Exploration**: Information gathering and novelty seeking
+- **Rest/Recovery**: System maintenance and optimization cycles
+
+### 11. Pituitary Gland - Endocrine Master Controller
+**Location**: `opencog/openpsi/` + `ros-behavior-scripting/sensors/` - Hormonal/Chemical messaging
+**Function**: Coordinates long-term behavioral and cognitive states through chemical signaling
+**Integration Points**:
+- `opencog/openpsi/` - Long-term drive modulation
+- `ros-behavior-scripting/sensors/affect.py` - Mood and emotional state management
+- `atomspace/` - Persistent state storage for long-term behavioral patterns
+- Inter-system communication protocols
+
+**Key Files**:
+```
+opencog/openpsi/OpenPsiRules.cc
+ros-behavior-scripting/sensors/affect.py
+atomspace/opencog/persist/
+cogserver/opencog/network/
+```
+
+**Chemical Messaging Systems**:
+- **Stress Response**: System-wide alertness and resource reallocation
+- **Reward Signaling**: Positive reinforcement and learning enhancement
+- **Circadian Rhythms**: Time-based behavioral and cognitive cycles
+- **Social Bonding**: Trust and cooperation mechanisms
+- **Growth/Development**: Learning rate and adaptation speed modulation
+
+### 12. Pineal Gland - Circadian and Intuitive Processing
+**Location**: `opencog/` + timing systems - Temporal coordination and pattern recognition
+**Function**: Circadian rhythm control, temporal pattern recognition, intuitive processing
+**Integration Points**:
+- System scheduling and temporal coordination
+- `learn/` - Long-term pattern recognition across time
+- `miner/` - Discovery of temporal and meta-patterns
+- `opencog/openpsi/dynamics/` - Time-based drive modulation
+
+**Key Files**:
+```
+opencog/opencog/openpsi/dynamics/
+learn/scm/
+miner/opencog/miner/
+cogserver/lib/opencog.conf
+```
+
+**Temporal Functions**:
+- **Circadian Control**: Daily cycles of cognitive activity and maintenance
+- **Seasonal Adaptation**: Long-term behavioral and learning adjustments
+- **Intuitive Processing**: Non-linear pattern recognition and insight generation
+- **Temporal Integration**: Coordination of multi-timescale processes
+- **Metacognitive Awareness**: Higher-order reflection on system states and patterns
+
 ## Echo-Specific Integrations
 
 ### Deep Tree Echo Components
