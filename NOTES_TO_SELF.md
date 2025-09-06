@@ -55,6 +55,7 @@
 1. **Quantum-Inspired Superposition**: Multiple solution paths exist simultaneously until observation
 2. **Cognitive Metabolism**: Components that aren't used atrophy, successful ones grow
 3. **Emergent Goal Formation**: Let goals arise from component interactions rather than top-down specification
+4. **ASQL MetaGraph Integration**: Upgrade HGQL to typed hypergraph with introspection - queries can query themselves!
 
 ### Integration Opportunities:
 - Link language processing directly to embodiment for grounded semantics
