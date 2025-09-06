@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 OpenCog Cognitive Integration Bridge</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #a0c4ff;
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .panel h2 {
+            margin-top: 0;
+            color: #ffcc00;
+            font-size: 1.4em;
+            border-bottom: 2px solid rgba(255, 204, 0, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        #cognitive-graph {
+            width: 100%;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .node:hover {
+            filter: brightness(1.3);
+        }
+        
+        .link {
+            stroke: #00ffff;
+            stroke-opacity: 0.6;
+            stroke-width: 2;
+        }
+        
+        .emergence-indicator {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            animation: emerge 1s ease-in-out;
+        }
+        
+        @keyframes emerge {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .metric-label {
+            color: #a0c4ff;
+        }
+        
+        .metric-value {
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        
+        .attention-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            height: 20px;
+            margin: 5px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .attention-fill {
+            background: linear-gradient(90deg, #00ff88, #00ffff);
+            height: 100%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .component-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border-left: 3px solid #00ff88;
+        }
+        
+        .capability {
+            display: inline-block;
+            background: rgba(100, 200, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin: 2px;
+        }
+        
+        .control-panel {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .synergy-flow {
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            animation: flow 2s linear infinite;
+            border-radius: 2px;
+            margin: 10px 0;
+        }
+        
+        @keyframes flow {
+            from { background-position: -100px; }
+            to { background-position: 100px; }
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: blink 1s infinite;
+        }
+        
+        .status-active {
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 OpenCog Cognitive Integration Bridge</h1>
+            <div class="subtitle">Self-Aware Orchestration of Distributed Cognitive Architecture</div>
+            <div class="synergy-flow"></div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="panel">
+                <h2>Cognitive Architecture Graph</h2>
+                <div id="cognitive-graph"></div>
+                <div class="control-panel">
+                    <button onclick="detectEmergence()">🔮 Detect Emergence</button>
+                    <button onclick="refreshGraph()">🔄 Refresh Graph</button>
+                    <button onclick="simulateInteraction()">⚡ Simulate Interaction</button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>Cognitive State</h2>
+                <div id="state-metrics">
+                    <div class="metric">
+                        <span class="metric-label">Active Components</span>
+                        <span class="metric-value" id="active-components">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Synaptic Connections</span>
+                        <span class="metric-value" id="synaptic-connections">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Emergence Patterns</span>
+                        <span class="metric-value" id="emergence-patterns">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Graph Density</span>
+                        <span class="metric-value" id="graph-density">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Interaction Memory</span>
+                        <span class="metric-value" id="interaction-memory">-</span>
+                    </div>
+                </div>
+                
+                <h2 style="margin-top: 30px;">Attention Allocation</h2>
+                <div id="attention-display"></div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>Emergent Patterns</h2>
+            <div id="emergence-display">
+                <p style="color: #a0c4ff;">Monitoring for emergent cognitive patterns...</p>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>Component Capabilities</h2>
+            <div id="capabilities-display"></div>
+        </div>
+    </div>
+    
+    <script>
+        // D3.js visualization
+        let simulation;
+        let svg;
+        let graphData = { nodes: [], edges: [] };
+        
+        function initializeGraph() {
+            const width = document.getElementById('cognitive-graph').clientWidth;
+            const height = 500;
+            
+            svg = d3.select('#cognitive-graph')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+                
+            // Add zoom behavior
+            const zoom = d3.zoom()
+                .scaleExtent([0.5, 3])
+                .on('zoom', (event) => {
+                    svg.select('g').attr('transform', event.transform);
+                });
+                
+            svg.call(zoom);
+            
+            const g = svg.append('g');
+            
+            // Initialize force simulation
+            simulation = d3.forceSimulation()
+                .force('link', d3.forceLink().id(d => d.id).distance(100))
+                .force('charge', d3.forceManyBody().strength(-300))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(30));
+        }
+        
+        function updateGraph(data) {
+            const g = svg.select('g');
+            g.selectAll('*').remove();
+            
+            // Create links
+            const link = g.append('g')
+                .selectAll('line')
+                .data(data.edges)
+                .enter().append('line')
+                .attr('class', 'link')
+                .style('stroke-width', d => d.weight * 5);
+                
+            // Create nodes
+            const node = g.append('g')
+                .selectAll('g')
+                .data(data.nodes)
+                .enter().append('g')
+                .attr('class', 'node')
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended));
+                    
+            // Add circles for nodes
+            node.append('circle')
+                .attr('r', d => 20 + d.attention * 20)
+                .style('fill', d => {
+                    const colors = {
+                        'memory_substrate': '#ff6b6b',
+                        'reasoning_engine': '#4ecdc4',
+                        'evolutionary_learning': '#95e77e',
+                        'resource_allocation': '#ffd93d',
+                        'goal_orchestration': '#a8e6cf',
+                        'rule_engine': '#ff8b94',
+                        'sensorimotor_integration': '#b4a7d6',
+                        'linguistic_processing': '#ffaaa5'
+                    };
+                    return colors[d.type] || '#888';
+                })
+                .style('stroke', '#fff')
+                .style('stroke-width', 2);
+                
+            // Add labels
+            node.append('text')
+                .text(d => d.id)
+                .style('fill', 'white')
+                .style('font-size', '12px')
+                .style('text-anchor', 'middle')
+                .attr('dy', 4);
+                
+            // Update simulation
+            simulation.nodes(data.nodes);
+            simulation.force('link').links(data.edges);
+            simulation.alpha(1).restart();
+            
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+                    
+                node.attr('transform', d => `translate(${d.x},${d.y})`);
+            });
+        }
+        
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+        
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+        
+        async function fetchCognitiveState() {
+            try {
+                const response = await fetch('/api/cognitive/state');
+                const state = await response.json();
+                
+                // Update metrics
+                document.getElementById('active-components').textContent = state.active_components;
+                document.getElementById('synaptic-connections').textContent = state.synaptic_connections;
+                document.getElementById('emergence-patterns').textContent = state.emergence_patterns;
+                document.getElementById('graph-density').textContent = state.graph_metrics.density.toFixed(3);
+                document.getElementById('interaction-memory').textContent = state.interaction_history;
+                
+                // Update attention display
+                const attentionDiv = document.getElementById('attention-display');
+                attentionDiv.innerHTML = '';
+                
+                for (const [component, attention] of Object.entries(state.attention_distribution)) {
+                    const item = document.createElement('div');
+                    item.className = 'component-item';
+                    item.innerHTML = `
+                        <div><span class="status-indicator status-active"></span>${component}</div>
+                        <div class="attention-bar">
+                            <div class="attention-fill" style="width: ${attention * 100}%"></div>
+                        </div>
+                        <small style="color: #a0c4ff;">${(attention * 100).toFixed(1)}% attention</small>
+                    `;
+                    attentionDiv.appendChild(item);
+                }
+            } catch (error) {
+                console.error('Error fetching cognitive state:', error);
+            }
+        }
+        
+        async function fetchGraphData() {
+            try {
+                const response = await fetch('/api/cognitive/graph');
+                graphData = await response.json();
+                updateGraph(graphData);
+                
+                // Update capabilities display
+                updateCapabilities(graphData.nodes);
+            } catch (error) {
+                console.error('Error fetching graph data:', error);
+            }
+        }
+        
+        function updateCapabilities(nodes) {
+            const capDiv = document.getElementById('capabilities-display');
+            capDiv.innerHTML = '';
+            
+            nodes.forEach(node => {
+                const item = document.createElement('div');
+                item.className = 'component-item';
+                item.innerHTML = `
+                    <strong>${node.id}</strong> (${node.type})<br>
+                    ${node.capabilities.map(cap => 
+                        `<span class="capability">${cap}</span>`
+                    ).join('')}
+                `;
+                capDiv.appendChild(item);
+            });
+        }
+        
+        async function detectEmergence() {
+            try {
+                const response = await fetch('/api/cognitive/emergence');
+                const data = await response.json();
+                
+                const emergeDiv = document.getElementById('emergence-display');
+                emergeDiv.innerHTML = '';
+                
+                if (data.patterns && data.patterns.length > 0) {
+                    data.patterns.forEach(pattern => {
+                        const patternDiv = document.createElement('div');
+                        patternDiv.className = 'emergence-indicator';
+                        patternDiv.innerHTML = `
+                            <strong>🌟 ${pattern.pattern_type}</strong><br>
+                            Components: ${pattern.components.join(', ')}<br>
+                            ${pattern.synergy_strength ? 
+                                `Synergy Strength: ${(pattern.synergy_strength * 100).toFixed(1)}%<br>` : ''}
+                            Capabilities: ${pattern.capabilities.join(', ')}
+                        `;
+                        emergeDiv.appendChild(patternDiv);
+                    });
+                } else {
+                    emergeDiv.innerHTML = '<p style="color: #a0c4ff;">No emergence patterns detected yet...</p>';
+                }
+                
+                // Refresh state to show updated emergence count
+                fetchCognitiveState();
+            } catch (error) {
+                console.error('Error detecting emergence:', error);
+            }
+        }
+        
+        async function simulateInteraction() {
+            const interactions = [
+                { type: 'reasoning', success: 0.8 },
+                { type: 'language_processing', success: 0.9 },
+                { type: 'goal_learning', success: 0.7 },
+                { type: 'inference_text', success: 0.85 }
+            ];
+            
+            const interaction = interactions[Math.floor(Math.random() * interactions.length)];
+            
+            try {
+                await fetch('/api/cognitive/learn', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(interaction)
+                });
+                
+                // Refresh displays
+                fetchCognitiveState();
+                fetchGraphData();
+            } catch (error) {
+                console.error('Error simulating interaction:', error);
+            }
+        }
+        
+        function refreshGraph() {
+            fetchGraphData();
+            fetchCognitiveState();
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            initializeGraph();
+            fetchGraphData();
+            fetchCognitiveState();
+            
+            // Auto-refresh every 5 seconds
+            setInterval(() => {
+                fetchCognitiveState();
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
