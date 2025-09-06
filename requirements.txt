@@ -3,3 +3,4 @@ pandas
 scikit-learn
 matplotlib
 pyyaml>=6.0
+requests
