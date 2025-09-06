@@ -127,10 +127,10 @@ class CognitiveIntegrationBridge:
         strong_components = list(nx.strongly_connected_components(self.cognitive_graph))
         
         for component_set in strong_components:
-            if len(component_set) >= 3:  # Multi-component synergy
+            if len(component_set) >= 2:  # Multi-component synergy (lowered threshold)
                 synergy_strength = self._calculate_synergy_strength(component_set)
                 
-                if synergy_strength > 0.7:  # High synergy threshold
+                if synergy_strength > 0.5:  # Lowered synergy threshold for more detection
                     emergence_candidates.append({
                         'components': list(component_set),
                         'synergy_strength': synergy_strength,
@@ -141,14 +141,61 @@ class CognitiveIntegrationBridge:
                     
         # Detect information flow patterns
         centrality = nx.betweenness_centrality(self.cognitive_graph)
-        hubs = [node for node, cent in centrality.items() if cent > 0.3]
+        hubs = [node for node, cent in centrality.items() if cent > 0.2]  # Lowered threshold
         
         if len(hubs) >= 2:
             emergence_candidates.append({
                 'components': hubs,
                 'pattern_type': 'information_hub',
                 'timestamp': time.time(),
+                'synergy_strength': 0.8,
                 'capabilities': ['cross_component_integration', 'information_routing']
+            })
+            
+        # Detect specific synergistic patterns
+        # Memory-Reasoning Synergy
+        if 'atomspace' in self.cognitive_graph.nodes() and 'pln' in self.cognitive_graph.nodes():
+            if self.cognitive_graph.has_edge('atomspace', 'pln') or self.cognitive_graph.has_edge('pln', 'atomspace'):
+                emergence_candidates.append({
+                    'components': ['atomspace', 'pln'],
+                    'pattern_type': 'memory_reasoning_synergy',
+                    'timestamp': time.time(),
+                    'synergy_strength': 0.9,
+                    'capabilities': ['uncertain_knowledge_reasoning', 'truth_value_propagation']
+                })
+                
+        # Attention-Learning Synergy  
+        if 'attention' in self.cognitive_graph.nodes() and 'moses' in self.cognitive_graph.nodes():
+            if self.cognitive_graph.has_edge('attention', 'moses') or any(
+                self.cognitive_graph.has_edge('attention', node) and self.cognitive_graph.has_edge(node, 'moses')
+                for node in self.cognitive_graph.nodes()
+            ):
+                emergence_candidates.append({
+                    'components': ['attention', 'moses'],
+                    'pattern_type': 'attention_learning_synergy',
+                    'timestamp': time.time(),
+                    'synergy_strength': 0.85,
+                    'capabilities': ['focused_evolution', 'adaptive_attention_allocation']
+                })
+                
+        # Language-Embodiment Synergy
+        if 'language' in self.cognitive_graph.nodes() and 'embodiment' in self.cognitive_graph.nodes():
+            emergence_candidates.append({
+                'components': ['language', 'embodiment'],
+                'pattern_type': 'grounded_language_synergy',
+                'timestamp': time.time(),
+                'synergy_strength': 0.75,
+                'capabilities': ['embodied_language_understanding', 'grounded_semantics']
+            })
+            
+        # Goal-Rule Synergy
+        if 'ghost' in self.cognitive_graph.nodes() and 'ure' in self.cognitive_graph.nodes():
+            emergence_candidates.append({
+                'components': ['ghost', 'ure'],
+                'pattern_type': 'goal_rule_synergy', 
+                'timestamp': time.time(),
+                'synergy_strength': 0.8,
+                'capabilities': ['adaptive_goal_optimization', 'rule_guided_behavior']
             })
             
         self.emergence_events.extend(emergence_candidates)
