@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -Wall -fPIC -fstack-protector -Wno-variadic-macros -fopenmp -std=gnu++17 -O3 -g -shared -Wl,-soname,libstorage-types.so -o libstorage-types.so "CMakeFiles/storage-types.dir/storage_types_init.cc.o"  -Wl,-rpath,:::::::::::::::::::::: -lpthread 

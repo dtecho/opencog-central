@@ -1,0 +1,406 @@
+
+#include "opencog_llama.h"
+#include "atomspace_llama.h"
+
+#include <opencog/atomspace/AtomSpace.h>
+#include <opencog/atoms/base/Handle.h>
+#include <opencog/atoms/truthvalue/SimpleTruthValue.h>
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <algorithm>
+#include <chrono>
+#include <thread>
+
+// llama.cpp includes would go here
+// #include "llama.h"
+
+namespace opencog {
+namespace llama {
+
+/**
+ * Private implementation class
+ */
+class OpenCogLlama::Impl {
+public:
+    AtomSpace atomspace;
+    std::unique_ptr<AtomSpaceLlama> atomspace_bridge;
+    
+    // llama.cpp objects
+    llama_model* model = nullptr;
+    llama_context* context = nullptr;
+    
+    // Configuration
+    int reasoning_depth = 5;
+    double creativity_level = 0.7;
+    double logical_strictness = 0.8;
+    
+    // Callbacks
+    ReasoningCallback reasoning_callback;
+    LearningCallback learning_callback;
+    
+    // Statistics
+    size_t queries_processed = 0;
+    size_t inferences_made = 0;
+    double total_reasoning_time = 0.0;
+    
+    bool is_initialized = false;
+};
+
+OpenCogLlama::OpenCogLlama() : pImpl(std::make_unique<Impl>()) {
+    pImpl->atomspace_bridge = std::make_unique<AtomSpaceLlama>(pImpl->atomspace);
+}
+
+OpenCogLlama::~OpenCogLlama() {
+    shutdown();
+}
+
+bool OpenCogLlama::initialize(const std::string& model_path, const std::string& atomspace_config) {
+    try {
+        // Initialize llama.cpp backend
+        // llama_backend_init();
+        
+        // Load model (placeholder implementation)
+        std::cout << "Loading model from: " << model_path << std::endl;
+        
+        // Initialize cognitive rules
+        initialize_cognitive_rules();
+        
+        // Load AtomSpace configuration if provided
+        if (!atomspace_config.empty()) {
+            if (!load_atomspace(atomspace_config)) {
+                std::cerr << "Warning: Could not load AtomSpace config: " << atomspace_config << std::endl;
+            }
+        }
+        
+        pImpl->is_initialized = true;
+        std::cout << "OpenCog-Llama system initialized successfully" << std::endl;
+        return true;
+        
+    } catch (const std::exception& e) {
+        std::cerr << "Initialization failed: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+void OpenCogLlama::shutdown() {
+    if (pImpl->is_initialized) {
+        // Cleanup llama.cpp resources
+        if (pImpl->context) {
+            // llama_free(pImpl->context);
+            pImpl->context = nullptr;
+        }
+        if (pImpl->model) {
+            // llama_free_model(pImpl->model);
+            pImpl->model = nullptr;
+        }
+        
+        pImpl->is_initialized = false;
+        std::cout << "OpenCog-Llama system shut down" << std::endl;
+    }
+}
+
+std::string OpenCogLlama::reason(const std::string& query, const std::vector<Handle>& context) {
+    if (!pImpl->is_initialized) {
+        throw ReasoningError("System not initialized");
+    }
+    
+    auto start_time = std::chrono::high_resolution_clock::now();
+    
+    try {
+        // Convert AtomSpace context to natural language
+        std::string context_prompt = pImpl->atomspace_bridge->atoms_to_natural_language(context);
+        
+        // Construct reasoning prompt
+        std::ostringstream prompt;
+        prompt << "Context:\n" << context_prompt << "\n\n";
+        prompt << "Question: " << query << "\n\n";
+        prompt << "Please provide a step-by-step logical reasoning to answer this question:\n";
+        
+        // Generate response using llama.cpp
+        std::string response = generate_response(prompt.str());
+        
+        // Process the response and update AtomSpace
+        process_llama_output(response);
+        
+        // Update statistics
+        pImpl->queries_processed++;
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+        pImpl->total_reasoning_time += duration.count() / 1000.0;
+        
+        // Trigger callback if set
+        if (pImpl->reasoning_callback) {
+            double confidence = get_reasoning_confidence();
+            pImpl->reasoning_callback(response, confidence);
+        }
+        
+        return response;
+        
+    } catch (const std::exception& e) {
+        throw ReasoningError("Reasoning failed: " + std::string(e.what()));
+    }
+}
+
+std::string OpenCogLlama::generate_response(const std::string& prompt) {
+    // Placeholder implementation - in real version would use llama.cpp
+    std::ostringstream response;
+    response << "Based on the given context and question, I can reason as follows:\n\n";
+    response << "1. Analyzing the available information...\n";
+    response << "2. Identifying relevant patterns and relationships...\n";
+    response << "3. Applying logical inference rules...\n";
+    response << "4. Drawing conclusions based on the evidence...\n\n";
+    response << "This is a placeholder response that would be generated by the actual LLM model.";
+    
+    return response.str();
+}
+
+std::string OpenCogLlama::explain_reasoning(const Handle& atom) {
+    if (!atom) {
+        return "Invalid atom provided for explanation.";
+    }
+    
+    std::string atom_description = pImpl->atomspace_bridge->atom_to_description(atom);
+    std::string relationships = pImpl->atomspace_bridge->explain_atom_relationships(atom);
+    
+    std::ostringstream explanation;
+    explanation << "Explanation for atom: " << atom_description << "\n\n";
+    explanation << "Relationships and context:\n" << relationships << "\n\n";
+    explanation << "This atom represents a concept or relationship in the knowledge base "
+                << "with associated truth value indicating confidence and importance.";
+    
+    return explanation.str();
+}
+
+bool OpenCogLlama::load_atomspace(const std::string& atomspace_file) {
+    try {
+        // In a real implementation, this would load AtomSpace from file
+        std::ifstream file(atomspace_file);
+        if (!file.is_open()) {
+            return false;
+        }
+        
+        // Placeholder: would actually parse and load atoms
+        std::cout << "Loading AtomSpace from: " << atomspace_file << std::endl;
+        return true;
+        
+    } catch (const std::exception& e) {
+        std::cerr << "Error loading AtomSpace: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+bool OpenCogLlama::save_atomspace(const std::string& atomspace_file) {
+    try {
+        std::ofstream file(atomspace_file);
+        if (!file.is_open()) {
+            return false;
+        }
+        
+        // Placeholder: would actually serialize AtomSpace
+        std::string serialized = pImpl->atomspace_bridge->generate_knowledge_summary();
+        file << serialized;
+        
+        std::cout << "AtomSpace saved to: " << atomspace_file << std::endl;
+        return true;
+        
+    } catch (const std::exception& e) {
+        std::cerr << "Error saving AtomSpace: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+Handle OpenCogLlama::create_concept(const std::string& name, const TruthValue& tv) {
+    Handle concept = pImpl->atomspace.add_node(CONCEPT_NODE, name);
+    concept->setTruthValue(tv);
+    return concept;
+}
+
+Handle OpenCogLlama::create_relationship(const Handle& source, const Handle& target, 
+                                        const std::string& relation_type) {
+    Handle relation_node = pImpl->atomspace.add_node(PREDICATE_NODE, relation_type);
+    HandleSeq outgoing = {relation_node, source, target};
+    Handle relationship = pImpl->atomspace.add_link(EVALUATION_LINK, outgoing);
+    return relationship;
+}
+
+std::vector<Handle> OpenCogLlama::pattern_match(const Handle& pattern) {
+    // Placeholder implementation
+    std::vector<Handle> results;
+    
+    if (pattern) {
+        // In real implementation, would use PatternMiner or BindLink
+        results.push_back(pattern);
+    }
+    
+    return results;
+}
+
+Handle OpenCogLlama::forward_inference(const Handle& premise, const std::string& rule) {
+    if (!premise) {
+        return Handle::UNDEFINED;
+    }
+    
+    // Placeholder: create an inference result
+    std::string conclusion_name = "inferred_from_" + premise->get_name();
+    Handle conclusion = create_concept(conclusion_name, SimpleTruthValue::createTV(0.8, 0.9));
+    
+    pImpl->inferences_made++;
+    
+    return conclusion;
+}
+
+Handle OpenCogLlama::backward_inference(const Handle& goal) {
+    // Placeholder implementation for backward chaining
+    if (!goal) {
+        return Handle::UNDEFINED;
+    }
+    
+    std::cout << "Performing backward inference for goal: " << goal->get_name() << std::endl;
+    return goal; // Simplified
+}
+
+void OpenCogLlama::learn_from_interaction(const std::string& input, const std::string& output) {
+    // Extract concepts and relationships from the interaction
+    HandleSeq input_atoms = pImpl->atomspace_bridge->extract_concepts(input);
+    HandleSeq output_atoms = pImpl->atomspace_bridge->extract_concepts(output);
+    
+    // Strengthen associations between input and output concepts
+    HandleSeq all_atoms = input_atoms;
+    all_atoms.insert(all_atoms.end(), output_atoms.begin(), output_atoms.end());
+    pImpl->atomspace_bridge->strengthen_associations(all_atoms);
+    
+    std::cout << "Learned from interaction: " << input_atoms.size() + output_atoms.size() 
+              << " concepts processed" << std::endl;
+}
+
+void OpenCogLlama::update_knowledge(const Handle& atom, const TruthValue& new_tv) {
+    if (atom) {
+        atom->setTruthValue(new_tv);
+        
+        if (pImpl->learning_callback) {
+            pImpl->learning_callback(atom, new_tv);
+        }
+    }
+}
+
+double OpenCogLlama::get_confidence(const Handle& atom) {
+    if (!atom) return 0.0;
+    
+    TruthValuePtr tv = atom->getTruthValue();
+    return tv ? tv->get_confidence() : 0.0;
+}
+
+double OpenCogLlama::get_reasoning_confidence() const {
+    // Calculate overall system confidence based on recent reasoning
+    return 0.85; // Placeholder
+}
+
+size_t OpenCogLlama::get_knowledge_base_size() const {
+    return pImpl->atomspace.get_size();
+}
+
+std::string OpenCogLlama::get_system_status() const {
+    std::ostringstream status;
+    status << "OpenCog-Llama System Status:\n";
+    status << "Initialized: " << (pImpl->is_initialized ? "Yes" : "No") << "\n";
+    status << "Knowledge Base Size: " << get_knowledge_base_size() << " atoms\n";
+    status << "Queries Processed: " << pImpl->queries_processed << "\n";
+    status << "Inferences Made: " << pImpl->inferences_made << "\n";
+    status << "Average Reasoning Time: " 
+           << (pImpl->queries_processed > 0 ? 
+               pImpl->total_reasoning_time / pImpl->queries_processed : 0.0) 
+           << " seconds\n";
+    status << "Reasoning Depth: " << pImpl->reasoning_depth << "\n";
+    status << "Creativity Level: " << pImpl->creativity_level << "\n";
+    status << "Logical Strictness: " << pImpl->logical_strictness << "\n";
+    
+    return status.str();
+}
+
+std::string OpenCogLlama::analogical_reasoning(const Handle& source_domain, const Handle& target_domain) {
+    std::ostringstream result;
+    result << "Analogical reasoning between:\n";
+    result << "Source: " << (source_domain ? source_domain->get_name() : "undefined") << "\n";
+    result << "Target: " << (target_domain ? target_domain->get_name() : "undefined") << "\n";
+    result << "Finding structural similarities and mapping concepts...\n";
+    
+    return result.str();
+}
+
+std::string OpenCogLlama::causal_reasoning(const Handle& cause, const Handle& effect) {
+    std::ostringstream result;
+    result << "Causal reasoning:\n";
+    result << "Cause: " << (cause ? cause->get_name() : "undefined") << "\n";
+    result << "Effect: " << (effect ? effect->get_name() : "undefined") << "\n";
+    result << "Analyzing causal mechanisms and intermediate steps...\n";
+    
+    return result.str();
+}
+
+std::string OpenCogLlama::temporal_reasoning(const std::vector<Handle>& events) {
+    std::ostringstream result;
+    result << "Temporal reasoning over " << events.size() << " events:\n";
+    
+    for (size_t i = 0; i < events.size(); ++i) {
+        result << "Event " << (i + 1) << ": " 
+               << (events[i] ? events[i]->get_name() : "undefined") << "\n";
+    }
+    
+    result << "Analyzing temporal relationships and sequences...\n";
+    
+    return result.str();
+}
+
+void OpenCogLlama::set_reasoning_depth(int depth) {
+    pImpl->reasoning_depth = std::max(1, std::min(depth, 20)); // Clamp between 1 and 20
+}
+
+void OpenCogLlama::set_creativity_level(double level) {
+    pImpl->creativity_level = std::max(0.0, std::min(level, 1.0)); // Clamp between 0 and 1
+}
+
+void OpenCogLlama::set_logical_strictness(double strictness) {
+    pImpl->logical_strictness = std::max(0.0, std::min(strictness, 1.0)); // Clamp between 0 and 1
+}
+
+void OpenCogLlama::set_reasoning_callback(ReasoningCallback callback) {
+    pImpl->reasoning_callback = callback;
+}
+
+void OpenCogLlama::set_learning_callback(LearningCallback callback) {
+    pImpl->learning_callback = callback;
+}
+
+void OpenCogLlama::initialize_cognitive_rules() {
+    std::cout << "Initializing cognitive rules and inference patterns..." << std::endl;
+    
+    // Here would initialize various cognitive architectures:
+    // - PLN rules for probabilistic logic
+    // - Pattern mining rules
+    // - Attention allocation mechanisms
+    // - Learning algorithms
+    
+    std::cout << "Cognitive rules initialized" << std::endl;
+}
+
+void OpenCogLlama::process_llama_output(const std::string& output) {
+    // Parse the LLM output and extract structured knowledge
+    HandleSeq new_concepts = pImpl->atomspace_bridge->extract_concepts(output);
+    HandleSeq new_relationships = pImpl->atomspace_bridge->extract_relationships(output);
+    
+    std::cout << "Processed LLM output: " << new_concepts.size() << " concepts, "
+              << new_relationships.size() << " relationships extracted" << std::endl;
+}
+
+std::string OpenCogLlama::atomspace_to_prompt(const std::vector<Handle>& atoms) {
+    return pImpl->atomspace_bridge->atoms_to_natural_language(atoms);
+}
+
+Handle OpenCogLlama::prompt_to_atomspace(const std::string& response) {
+    return pImpl->atomspace_bridge->natural_language_to_atoms(response);
+}
+
+} // namespace llama
+} // namespace opencog

@@ -1,0 +1,31 @@
+
+# Core SkinTwin-ASI Dependencies
+pyyaml>=6.0
+flask>=2.3.0
+flask-cors>=4.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+networkx>=3.0
+requests>=2.31.0
+
+# OpenCog Dependencies (optional - will use mock if not available)
+# opencog
+
+# Scientific Computing
+pandas>=2.0.0
+matplotlib>=3.7.0
+plotly>=5.15.0
+
+# Chemical Informatics (optional)
+rdkit-pypi>=2022.9.0
+
+# Biological Data Processing
+biopython>=1.81
+
+# Web Interface Enhancement
+jinja2>=3.1.0
+werkzeug>=2.3.0
+
+# Development and Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
