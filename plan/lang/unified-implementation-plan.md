@@ -1,190 +1,150 @@
 
 # OpenCog Unified Implementation Plan
 
-## Architecture Overview
-Based on the comprehensive OpenCog ecosystem analysis and `wiki/lang/org/opencog.org` specifications, this plan integrates all components into a unified cognitive architecture.
+## Phase 1: Foundation Layer Consolidation (Weeks 1-4)
 
-## Phase 1: Foundation Layer (Weeks 1-4)
-### Dependencies: None (foundational components)
+### 1.1 Core Infrastructure
+- **cogutil**: ✅ Already present - foundation utilities
+- **atomspace**: ✅ Already present - core hypergraph structure
+- **cogserver**: ✅ Already present - network server infrastructure
 
-#### Week 1: CogUtil Integration
-- **Status**: ✅ Already present
-- **Validation**: Ensure all utility functions are accessible
-- **Testing**: Core utility function tests
+### 1.2 Storage & Persistence Integration
+- **atomspace-rocks**: RocksDB backend for persistent storage
+- **atomspace-restful**: REST API for remote access
+- **atomspace-cog**: Distributed AtomSpace networking
 
-#### Week 2: AtomSpace Core Integration  
-- **Status**: ✅ Already present
-- **Enhancements**:
-  - AtomSpace-Rocks for persistence
-  - AtomSpace-RESTful for web API
-  - Multi-threading support validation
+### 1.3 Bridge Components
+- **atomspace-bridge**: Multi-backend storage abstraction
+- **atomspace-rpc**: gRPC interface for high-performance communication
 
-#### Week 3: CogServer Integration
-- **Status**: ✅ Already present  
-- **Enhancements**:
-  - Network protocol optimization
-  - Shell interface improvements
-  - Module loading system
+## Phase 2: Logic & Reasoning Systems (Weeks 5-8)
 
-#### Week 4: Foundation Testing & Validation
-- **Integration Tests**: All foundation components
-- **Performance Benchmarks**: AtomSpace operations
-- **API Documentation**: Complete foundation API docs
+### 2.1 Unification & Pattern Matching
+- **unify**: Pattern unification algorithms
+- **ure**: Unified Rule Engine for forward/backward chaining
 
-## Phase 2: Core Reasoning Systems (Weeks 5-8)
+### 2.2 Probabilistic Logic Networks
+- **pln**: Probabilistic reasoning and uncertainty handling
+- **miner**: Pattern mining and frequent subgraph discovery
 
-#### Week 5: Unification Engine
-- **Repository**: https://github.com/opencog/unify
-- **Integration**: Pattern matching and unification
-- **Dependencies**: AtomSpace
-- **Testing**: Unification algorithm validation
+### 2.3 Learning Systems
+- **moses**: Meta-optimizing semantic evolutionary search
+- **asmoses**: AtomSpace-integrated MOSES variant
 
-#### Week 6: Unified Rule Engine (URE)
-- **Repository**: https://github.com/opencog/ure  
-- **Integration**: Forward/backward chaining
-- **Dependencies**: AtomSpace, Unify
-- **Testing**: Rule execution performance
+## Phase 3: Cognitive Systems (Weeks 9-12)
 
-#### Week 7: Link Grammar Atomese
-- **Repository**: https://github.com/opencog/lg-atomese
-- **Integration**: Natural language parsing
-- **Dependencies**: Link Grammar, AtomSpace
-- **Testing**: Parse tree to AtomSpace conversion
+### 3.1 Attention Allocation
+- **attention**: ECAN-based attention allocation mechanism
+- Economic attention networks for resource management
+- Importance propagation and decay
 
-#### Week 8: Core Systems Integration Testing
-- **End-to-end**: Unify + URE + LG-Atomese
-- **Performance**: Query processing benchmarks
-- **Documentation**: Core systems usage guide
+### 3.2 Spatial-Temporal Reasoning
+- **spacetime**: Spatial and temporal relationship handling
+- 4D spacetime reasoning capabilities
+- Event sequence processing
 
-## Phase 3: Cognitive Architecture (Weeks 9-12)
+### 3.3 Natural Language Processing
+- **relex**: Relationship extraction from text
+- **link-grammar**: Syntactic parsing foundation
+- **lg-atomese**: Link Grammar to AtomSpace bridge
 
-#### Week 9: Attention Allocation (ECAN)
-- **Repository**: https://github.com/opencog/attention
-- **Integration**: Economic attention networks
-- **Dependencies**: AtomSpace, CogServer
-- **Features**: Attention spreading, importance decay
+## Phase 4: Advanced Systems (Weeks 13-16)
 
-#### Week 10: Spatial-Temporal Reasoning
-- **Repository**: https://github.com/opencog/spacetime
-- **Integration**: Space-time event processing  
-- **Dependencies**: AtomSpace
-- **Features**: Temporal sequence analysis
+### 4.1 Language Learning
+- **language-learning**: Unsupervised grammar induction
+- **learn**: Statistical learning from corpora
 
-#### Week 11: Probabilistic Logic Networks (PLN)
-- **Repository**: https://github.com/opencog/pln
-- **Integration**: Uncertain inference
-- **Dependencies**: URE, AtomSpace
-- **Features**: Truth value propagation
+### 4.2 Embodiment & Interaction
+- **ghost**: Goal-oriented behavior scripting
+- **embodiment**: Sensorimotor integration
+- **blender_api**: 3D avatar control
 
-#### Week 12: Cognitive Integration Testing
-- **System-wide**: ECAN + SpaceTime + PLN
-- **Cognitive Workflows**: End-to-end reasoning
-- **Performance**: Attention allocation efficiency
+### 4.3 Neural-Symbolic Integration
+- **nn**: Neural network components
+- **llm-c**: Large language model integration
+- Custom ggml kernels for cognitive computation
 
-## Phase 4: Advanced Learning Systems (Weeks 13-16)
+## Phase 5: Integration & Orchestration (Weeks 17-20)
 
-#### Week 13: Pattern Mining
-- **Repository**: https://github.com/opencog/miner
-- **Integration**: Frequent pattern discovery
-- **Dependencies**: AtomSpace, URE
-- **Features**: Temporal pattern mining
+### 5.1 Ontogenetic Development
+- **ontogenesis**: Dynamic cognitive architecture orchestration
+- 10-layer developmental progression
+- Meta-cognitive capabilities
 
-#### Week 14: MOSES Evolutionary Learning
-- **Repository**: https://github.com/opencog/moses  
-- **Integration**: Evolutionary program synthesis
-- **Dependencies**: CogUtil
-- **Features**: Combo program evolution
+### 5.2 Specialized Applications
+- **agi-bio**: Bioinformatics and aging research
+- **agi-skintwin**: Multiscale biological modeling
+- **gnucashcog-v3**: Cognitive accounting system
 
-#### Week 15: AS-MOSES Integration
-- **Repository**: https://github.com/opencog/asmoses
-- **Integration**: AtomSpace-based MOSES
-- **Dependencies**: MOSES, AtomSpace  
-- **Features**: Symbolic learning in hypergraphs
-
-#### Week 16: Learning Systems Integration
-- **Combined**: Miner + MOSES + AS-MOSES
-- **Validation**: Learning algorithm performance
-- **Testing**: Evolutionary learning benchmarks
-
-## Phase 5: Language Learning Systems (Weeks 17-20)
-
-#### Week 17: Language Learning Framework
-- **Repository**: https://github.com/opencog/language-learning
-- **Integration**: Unsupervised grammar learning
-- **Dependencies**: CogUtil, URE
-- **Features**: Grammar induction from text
-
-#### Week 18: Learn Module Integration  
-- **Repository**: https://github.com/opencog/learn
-- **Integration**: Statistical learning algorithms
-- **Dependencies**: AtomSpace, Language-Learning
-- **Features**: Word pair statistics, MST parsing
-
-#### Week 19: Complete Language Pipeline
-- **Integration**: LG-Atomese + Language-Learning + Learn
-- **Testing**: End-to-end language processing
-- **Validation**: Grammar learning benchmarks
-
-#### Week 20: Final System Integration
-- **Complete System**: All 11 components integrated
-- **Testing**: Full cognitive architecture validation
-- **Documentation**: Complete system documentation
-- **Deployment**: Production-ready configuration
+### 5.3 Web & API Interfaces
+- **atomspace-explorer**: Web-based AtomSpace visualization
+- **rest-api-documentation**: Comprehensive API documentation
+- **python-client**: High-level Python interface
 
 ## Technical Specifications
 
-### Build System Requirements
-```cmake
-# Root CMakeLists.txt structure
-cmake_minimum_required(VERSION 3.16)
-project(OpenCogUnified)
+### Architecture Requirements
+1. **Hypergraph Substrate**: All knowledge represented as atoms and links
+2. **Distributed Computing**: Multi-node processing capabilities
+3. **Real-time Processing**: Sub-second response times for basic queries
+4. **Scalability**: Handle millions of atoms efficiently
+5. **Persistence**: Durable storage with backup/recovery
 
-# Component integration order (dependency-based)
-add_subdirectory(cogutil)           # Foundation
-add_subdirectory(atomspace)         # Core storage
-add_subdirectory(cogserver)         # Core server
-add_subdirectory(atomspace-rocks)   # Persistence
-add_subdirectory(atomspace-restful) # REST API
-add_subdirectory(unify)             # Logic foundation
-add_subdirectory(ure)               # Rule engine
-add_subdirectory(lg-atomese)        # Language parsing
-add_subdirectory(attention)         # Cognitive attention
-add_subdirectory(spacetime)         # Temporal reasoning
-add_subdirectory(pln)               # Probabilistic logic
-add_subdirectory(miner)             # Pattern mining
-add_subdirectory(moses)             # Evolutionary learning
-add_subdirectory(asmoses)           # AtomSpace MOSES
-add_subdirectory(language-learning) # Language acquisition
-add_subdirectory(learn)             # Statistical learning
-add_subdirectory(opencog)           # Final integration
+### Performance Benchmarks
+- Atom creation: >100K atoms/second
+- Pattern matching: <10ms for simple patterns
+- Rule engine: >1K inferences/second
+- Memory usage: <1GB for basic operation
+- Network latency: <50ms for distributed operations
+
+### Integration Standards
+- All components use cmake build system
+- Consistent C++17/Scheme API patterns
+- Docker containerization for deployment
+- Comprehensive test coverage (>80%)
+- Standardized logging and monitoring
+
+## Implementation Dependencies
+
+```
+Foundation: cogutil → atomspace → cogserver
+Storage: atomspace → atomspace-rocks, atomspace-restful
+Logic: atomspace → unify → ure → pln
+Cognitive: atomspace + cogserver → attention, spacetime
+Learning: cogutil → moses, language-learning
+NLP: link-grammar → lg-atomese → relex
+Advanced: ALL → opencog (final integration)
 ```
 
-### Integration Testing Strategy
-- **Unit Tests**: Each component independently
-- **Integration Tests**: Component pairs and triplets  
-- **System Tests**: Full cognitive workflows
-- **Performance Tests**: Scalability and throughput
-- **Regression Tests**: Backward compatibility
+## Quality Assurance
+
+### Testing Strategy
+1. Unit tests for all components
+2. Integration tests for component interactions
+3. Performance benchmarks and regression testing
+4. End-to-end cognitive scenarios
+5. Stress testing under load
 
 ### Documentation Requirements
-- **API Documentation**: Complete function references
-- **Integration Guides**: Component interaction patterns
-- **Usage Examples**: Real-world cognitive applications
-- **Performance Guides**: Optimization recommendations
+1. API documentation for all public interfaces
+2. Architecture diagrams and design documents
+3. Tutorial examples and getting-started guides
+4. Performance tuning and optimization guides
+5. Troubleshooting and FAQ sections
 
-## Success Criteria
-1. **All 11 components** successfully integrated
-2. **Build system** supports full dependency resolution
-3. **Test suite** achieves >90% code coverage
-4. **Performance benchmarks** meet baseline requirements
-5. **Documentation** provides complete usage guidance
-6. **Production deployment** demonstrates system stability
+## Deployment Plan
 
-## Risk Mitigation
-- **Dependency conflicts**: Careful version management
-- **Build failures**: Incremental integration approach
-- **Performance issues**: Continuous benchmarking
-- **Integration complexity**: Modular testing strategy
-- **Documentation gaps**: Parallel documentation development
+### Development Environment
+- Replit-based development with full toolchain
+- Automated CI/CD pipeline
+- Code quality enforcement (linting, formatting)
+- Dependency management and version control
 
-This plan leverages your existing foundation (cogutil, atomspace, cogserver) and systematically integrates the remaining components following the natural dependency hierarchy for a complete OpenCog unified system.
+### Production Deployment
+- Containerized deployment on Replit
+- Load balancing and auto-scaling
+- Monitoring and alerting systems
+- Backup and disaster recovery
+- Security hardening and access controls
+
+This plan provides a systematic approach to implementing the complete OpenCog cognitive architecture while maintaining quality, performance, and integration standards throughout the development process.

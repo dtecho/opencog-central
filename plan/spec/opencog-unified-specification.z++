@@ -1,44 +1,263 @@
 
-schema OpenCogUnifiedSystem
-  components: seq Component
-  atomspaces: seq AtomSpace
-  cognitive_agents: seq CognitiveAgent
-  reasoning_engines: seq ReasoningEngine
+# OpenCog Unified Cognitive Architecture - Formal Z++ Specification
 
-schema Component ::= 
-  | Foundation ⟨cogutil: CogUtil⟩
-  | Core ⟨atomspace: AtomSpace, cogserver: CogServer⟩  
-  | Logic ⟨unify: UnifyEngine, ure: URE⟩
-  | Cognitive ⟨attention: AttentionBank, spacetime: SpaceTime⟩
-  | Advanced ⟨pln: PLN, miner: PatternMiner⟩
-  | Learning ⟨moses: MOSES, asmoses: ASMOSES⟩
-  | Language ⟨lg_atomese: LGAtomese, learn: LanguageLearning⟩
-  | Integration ⟨opencog: OpenCogCore⟩
+## Schema Definitions
 
+### Basic Types
+```z++
+[ATOM, LINK, NODE, HANDLE, UUID, TYPE]
+
+AtomType ::= NodeType | LinkType
+NodeType ::= concept | predicate | variable | number | string
+LinkType ::= inheritance | similarity | evaluation | execution | implication
+
+TruthValue ::= ⟨strength: ℝ[0,1], confidence: ℝ[0,1]⟩
+AttentionValue ::= ⟨sti: ℤ, lti: ℤ, vlti: ℤ⟩
+```
+
+### AtomSpace Structure
+```z++
 schema AtomSpace
-  atoms: seq Atom
-  values: seq Value
-  query_engine: QueryEngine
-  storage_backend: StorageBackend
+  atoms: 𝒫 ATOM
+  links: 𝒫 LINK
+  handles: ATOM ↣ HANDLE
+  types: ATOM → AtomType
+  truth_values: ATOM ↣ TruthValue
+  attention_values: ATOM ↣ AttentionValue
+  
+  invariant:
+    ∀ a: ATOM | a ∈ atoms ⇔ a ∈ dom handles
+    ∀ l: LINK | l ∈ links ⇒ l ∈ atoms
+    ∀ a: ATOM | a ∈ atoms ⇒ types(a) ∈ AtomType
+end
+```
 
-schema CognitiveAgent
-  attention_values: seq AttentionValue
-  goals: seq Goal
-  behaviors: seq Behavior
-  memory: WorkingMemory
+### Pattern Matching
+```z++
+schema Pattern
+  variables: 𝒫 ATOM
+  clauses: seq LINK
+  constraints: 𝒫 (ATOM × ATOM)
+  
+  invariant:
+    ∀ v: ATOM | v ∈ variables ⇒ types(v) = variable
+    ∀ c: LINK | c ∈ ran clauses ⇒ outgoing(c) ∩ variables ≠ ∅
+end
 
-schema ReasoningEngine ::=
-  | ForwardChainer ⟨rules: seq Rule, targets: seq Atom⟩
-  | BackwardChainer ⟨goals: seq Goal, premises: seq Atom⟩
-  | PatternMiner ⟨patterns: seq Pattern, frequency: ℕ⟩
+schema BindLink extends Pattern
+  implicand: LINK
+  
+  invariant:
+    variables(implicand) ⊆ variables
+end
+```
 
-init OpenCogSystem
-  components = [Foundation(cogutil), Core(atomspace, cogserver)]
-  atomspaces = [AtomSpace(∅, ∅, DefaultQuery, RocksDB)]
-  cognitive_agents = [CognitiveAgent(∅, ∅, ∅, WorkingMemory(∅))]
-  reasoning_engines = [ForwardChainer(∅, ∅), BackwardChainer(∅, ∅)]
+### Reasoning Engine
+```z++
+schema Rule
+  name: STRING
+  premises: seq Pattern
+  conclusion: Pattern
+  preconditions: 𝒫 (AtomSpace → 𝔹)
+  
+  invariant:
+    ∀ p: Pattern | p ∈ ran premises ⇒ 
+      variables(p) ⊆ variables(conclusion)
+end
 
-invariant SystemIntegrity
-  ∀ component ∈ components • component.dependencies ⊆ components
-  ∀ atomspace ∈ atomspaces • atomspace.storage_backend ≠ ∅
-  ∀ agent ∈ cognitive_agents • agent.attention_values.size ≤ MAX_ATTENTION
+schema URE
+  atomspace: AtomSpace
+  rules: 𝒫 Rule
+  control_parameters: ControlParams
+  
+  forward_chain: Pattern × ℕ → 𝒫 ATOM
+  backward_chain: Pattern × ℕ → 𝒫 ATOM
+  
+  invariant:
+    ∀ r: Rule | r ∈ rules ⇒ applicable(r, atomspace)
+end
+```
+
+### Attention Allocation
+```z++
+schema ECAN
+  atomspace: AtomSpace
+  attentional_focus: 𝒫 ATOM
+  heap_boundary: ℤ
+  min_sti: ℤ
+  max_sti: ℤ
+  
+  spread_importance: ATOM × ℝ → 
+  update_attention: → 
+  rent_collection: → 
+  
+  invariant:
+    attentional_focus = {a: ATOM | a ∈ atomspace.atoms ∧ 
+                        sti(a) > heap_boundary}
+    ∀ a: ATOM | a ∈ atomspace.atoms ⇒ 
+      min_sti ≤ sti(a) ≤ max_sti
+end
+```
+
+### Learning System
+```z++
+schema MOSES
+  population: seq Expression
+  fitness_function: Expression → ℝ
+  complexity_penalty: Expression → ℝ
+  max_generations: ℕ
+  
+  evolve: → Expression
+  select: seq Expression → seq Expression
+  reproduce: seq Expression → seq Expression
+  
+  invariant:
+    #population > 0
+    ∀ e: Expression | e ∈ ran population ⇒ valid_expression(e)
+end
+```
+
+### Natural Language Processing
+```z++
+schema LinkGrammar
+  dictionary: WORD ↣ 𝒫 Connector
+  rules: 𝒫 LinkingRule
+  
+  parse: seq WORD → 𝒫 ParseTree
+  
+  invariant:
+    ∀ w: WORD; c: Connector | 
+      w ∈ dom dictionary ∧ c ∈ dictionary(w) ⇒ 
+      valid_connector(c)
+end
+
+schema RelEx
+  link_grammar: LinkGrammar
+  semantic_rules: 𝒫 SemanticRule
+  
+  extract_relations: ParseTree → 𝒫 Relation
+  to_atomspace: 𝒫 Relation → AtomSpace
+end
+```
+
+## Operation Specifications
+
+### Atom Creation
+```z++
+operation AddAtom
+  Δ AtomSpace
+  atom?: ATOM
+  type?: AtomType
+  tv?: TruthValue
+  
+  pre:
+    atom? ∉ atoms
+    type? ∈ AtomType
+    
+  post:
+    atoms' = atoms ∪ {atom?}
+    types' = types ∪ {atom? ↦ type?}
+    truth_values' = truth_values ∪ {atom? ↦ tv?}
+end
+```
+
+### Pattern Matching
+```z++
+operation PatternMatch
+  Ξ AtomSpace
+  pattern?: Pattern
+  results!: 𝒫 (ATOM ↣ ATOM)
+  
+  pre:
+    valid_pattern(pattern?)
+    
+  post:
+    results! = {binding: ATOM ↣ ATOM | 
+               satisfies(binding, pattern?, atomspace)}
+end
+```
+
+### Rule Application
+```z++
+operation ApplyRule
+  Δ AtomSpace
+  rule?: Rule
+  bindings?: ATOM ↣ ATOM
+  new_atoms!: 𝒫 ATOM
+  
+  pre:
+    rule? ∈ rules
+    valid_bindings(bindings?, rule?)
+    
+  post:
+    new_atoms! = instantiate(rule?.conclusion, bindings?)
+    atoms' = atoms ∪ new_atoms!
+end
+```
+
+### Attention Spreading
+```z++
+operation SpreadAttention
+  Δ ECAN
+  source?: ATOM
+  amount?: ℝ
+  
+  pre:
+    source? ∈ atomspace.atoms
+    amount? > 0
+    sti(source?) ≥ amount?
+    
+  post:
+    ∀ target: ATOM | connected(source?, target) ⇒
+      sti'(target) = sti(target) + diffusion_factor(source?, target) × amount?
+    sti'(source?) = sti(source?) - amount?
+end
+```
+
+## System Invariants
+
+### Consistency Properties
+```z++
+theorem AtomSpaceConsistency
+  ∀ as: AtomSpace • 
+    (∀ l: LINK | l ∈ as.links ⇒ outgoing(l) ⊆ as.atoms) ∧
+    (∀ a: ATOM | a ∈ as.atoms ⇒ ∃! h: HANDLE • as.handles(a) = h) ∧
+    (∀ a: ATOM | a ∈ as.atoms ⇒ as.types(a) ∈ AtomType)
+```
+
+### Attention Conservation
+```z++
+theorem AttentionConservation
+  ∀ ecan: ECAN; Δ ecan • 
+    Σ{a: ATOM | a ∈ ecan.atomspace.atoms • sti(a)} =
+    Σ{a: ATOM | a ∈ ecan'.atomspace.atoms • sti'(a)}
+```
+
+### Rule Soundness
+```z++
+theorem RuleSoundness
+  ∀ r: Rule; as: AtomSpace; binding: ATOM ↣ ATOM •
+    valid_bindings(binding, r) ∧ 
+    (∀ p: Pattern | p ∈ ran r.premises • satisfies(binding, p, as)) ⇒
+    valid_instantiation(r.conclusion, binding)
+```
+
+## Performance Requirements
+
+### Time Complexity
+```z++
+AddAtom: O(1)
+PatternMatch: O(|atoms|^|variables|)
+ApplyRule: O(|premises| × |atoms|^|max_variables|)
+SpreadAttention: O(|connections|)
+```
+
+### Space Complexity
+```z++
+AtomSpace: O(|atoms| + |links|)
+Pattern: O(|clauses| + |variables|)
+URE: O(|rules| + |derivations|)
+ECAN: O(|atoms|)
+```
+
+This formal specification provides mathematical precision for the OpenCog architecture, ensuring correctness and consistency across all components.
