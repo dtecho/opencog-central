@@ -1,0 +1,44 @@
+
+schema OpenCogUnifiedSystem
+  components: seq Component
+  atomspaces: seq AtomSpace
+  cognitive_agents: seq CognitiveAgent
+  reasoning_engines: seq ReasoningEngine
+
+schema Component ::= 
+  | Foundation ⟨cogutil: CogUtil⟩
+  | Core ⟨atomspace: AtomSpace, cogserver: CogServer⟩  
+  | Logic ⟨unify: UnifyEngine, ure: URE⟩
+  | Cognitive ⟨attention: AttentionBank, spacetime: SpaceTime⟩
+  | Advanced ⟨pln: PLN, miner: PatternMiner⟩
+  | Learning ⟨moses: MOSES, asmoses: ASMOSES⟩
+  | Language ⟨lg_atomese: LGAtomese, learn: LanguageLearning⟩
+  | Integration ⟨opencog: OpenCogCore⟩
+
+schema AtomSpace
+  atoms: seq Atom
+  values: seq Value
+  query_engine: QueryEngine
+  storage_backend: StorageBackend
+
+schema CognitiveAgent
+  attention_values: seq AttentionValue
+  goals: seq Goal
+  behaviors: seq Behavior
+  memory: WorkingMemory
+
+schema ReasoningEngine ::=
+  | ForwardChainer ⟨rules: seq Rule, targets: seq Atom⟩
+  | BackwardChainer ⟨goals: seq Goal, premises: seq Atom⟩
+  | PatternMiner ⟨patterns: seq Pattern, frequency: ℕ⟩
+
+init OpenCogSystem
+  components = [Foundation(cogutil), Core(atomspace, cogserver)]
+  atomspaces = [AtomSpace(∅, ∅, DefaultQuery, RocksDB)]
+  cognitive_agents = [CognitiveAgent(∅, ∅, ∅, WorkingMemory(∅))]
+  reasoning_engines = [ForwardChainer(∅, ∅), BackwardChainer(∅, ∅)]
+
+invariant SystemIntegrity
+  ∀ component ∈ components • component.dependencies ⊆ components
+  ∀ atomspace ∈ atomspaces • atomspace.storage_backend ≠ ∅
+  ∀ agent ∈ cognitive_agents • agent.attention_values.size ≤ MAX_ATTENTION
