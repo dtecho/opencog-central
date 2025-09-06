@@ -1,15 +1,15 @@
-modules = ["c-clang14", "cpp-clang14", "nodejs-20"]
+modules = ["c-clang14", "cpp-clang14", "nodejs-20", "python-3.11"]
 run = "node index.js"
 
 [nix]
 channel = "stable-25_05"
-packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "libxcrypt", "libyaml", "pkg-config", "python312Packages.pip", "qhull", "tcl", "tk", "xsimd", "cmake", "unzip"]
+packages = ["cairo", "cmake", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "libxcrypt", "libyaml", "pkg-config", "python312Packages.pip", "qhull", "tcl", "tk", "unzip", "xsimd"]
 
 [deployment]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "NiFi System"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "SkinTwin System"
@@ -51,5 +51,30 @@ mode = "sequential"
 task = "shell.exec"
 args = "python examples/ai_ml_integration_demo.py"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "OpenCog Dashboard"
+
+[[workflows.workflow]]
+name = "OpenCog Dashboard"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python ontogenesis_web.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [agent]
 expertMode = true
+
+[[ports]]
+localPort = 5000
+externalPort = 80
