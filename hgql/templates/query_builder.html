@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HGQL Query Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/query_builder.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>HyperGraph Query Language (HGQL) Interface</h1>
+            <div class="toolbar">
+                <button id="new-query" class="btn primary">New Query</button>
+                <button id="execute-query" class="btn success">Execute</button>
+                <button id="save-query" class="btn secondary">Save</button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="query-panel">
+                <div class="query-builder">
+                    <h3>Query Builder</h3>
+                    <div class="query-type-selector">
+                        <label>Query Type:</label>
+                        <select id="query-type">
+                            <option value="MATCH">MATCH</option>
+                            <option value="BIND">BIND</option>
+                            <option value="INFER">INFER</option>
+                            <option value="UPDATE">UPDATE</option>
+                            <option value="TRIGGER">TRIGGER</option>
+                        </select>
+                    </div>
+                    
+                    <div class="pattern-builder">
+                        <label>Pattern:</label>
+                        <textarea id="pattern-input" placeholder="Enter hypergraph pattern..."></textarea>
+                    </div>
+                    
+                    <div class="conditions-builder">
+                        <label>Conditions:</label>
+                        <div id="conditions-list"></div>
+                        <button class="btn small" onclick="addCondition()">Add Condition</button>
+                    </div>
+                    
+                    <div class="inference-rules">
+                        <label>Inference Rules:</label>
+                        <div id="rules-list"></div>
+                        <button class="btn small" onclick="addRule()">Add Rule</button>
+                    </div>
+                    
+                    <div class="confidence-threshold">
+                        <label>Confidence Threshold:</label>
+                        <input type="range" id="confidence" min="0" max="1" step="0.1" value="0.5">
+                        <span id="confidence-value">0.5</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visualization-panel">
+                <h3>Hypergraph Visualization</h3>
+                <div id="hypergraph-viz"></div>
+            </div>
+        </div>
+        
+        <div class="results-panel">
+            <h3>Query Results</h3>
+            <div class="results-toolbar">
+                <button class="btn small" onclick="exportResults()">Export</button>
+                <button class="btn small" onclick="visualizeResults()">Visualize</button>
+            </div>
+            <div id="results-container"></div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/query_builder.js') }}"></script>
+</body>
+</html>
