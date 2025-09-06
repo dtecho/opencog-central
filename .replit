@@ -58,10 +58,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "OpenCog Dashboard"
+args = "OpenCog System"
 
 [[workflows.workflow]]
-name = "OpenCog Dashboard"
+name = "OpenCog System"
 author = "agent"
 
 [[workflows.workflow.tasks]]
