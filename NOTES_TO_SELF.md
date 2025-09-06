@@ -65,6 +65,16 @@
 
 ## 🔧 Technical Debt & Improvements
 
+### CRITICAL IMPLEMENTATION STRATEGY:
+- **Python = Prototyping ONLY** - Current bridges are prototypes for testing concepts
+- **Production Implementation Languages**:
+  - **C++**: Core performance-critical components (AtomSpace, pattern matcher)
+  - **Haskell**: Pure functional reasoning engines (PLN logic, type systems)
+  - **Prolog**: Logical inference and rule engines (URE, backward chaining)
+  - **Lisp/Scheme**: Symbolic manipulation and meta-programming (GHOST, self-modification)
+  - **Rust**: Memory-safe systems programming (new components)
+- **Package Management**: Use Nix exclusively (no sudo/apt/pip for production)
+
 ### Code Quality:
 - Many components use outdated patterns - gradually modernize
 - Inconsistent interfaces between systems - need unified API
