@@ -1,0 +1,35 @@
+{
+  "integration_rules": [
+    {
+      "name": "AtomSpace-PLN-Fusion",
+      "components": [
+        "atomspace",
+        "pln"
+      ],
+      "integration_type": "bidirectional_flow",
+      "data_transformations": [
+        "Convert atoms to logical propositions",
+        "Store inference results as new atoms",
+        "Propagate truth values through hypergraph"
+      ]
+    },
+    {
+      "name": "Attention-Moses-Synthesis",
+      "components": [
+        "attention",
+        "moses"
+      ],
+      "integration_type": "resource_allocation",
+      "data_transformations": [
+        "Focus evolutionary search on high-STI atoms",
+        "Evolve programs that manipulate attention",
+        "Learn attention allocation strategies"
+      ]
+    }
+  ],
+  "emergence_expectations": [
+    "Cross-component learning",
+    "Unified knowledge representation",
+    "Self-directed cognitive development"
+  ]
+}
