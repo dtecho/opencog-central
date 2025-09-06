@@ -1,0 +1,184 @@
+
+# Echo Brain Region Configuration
+# This file configures the mapping and interaction between brain regions
+# and their corresponding OpenCog system components
+
+brain_regions:
+  thalamus:
+    primary_system: "cogserver"
+    components:
+      - "atomspace"
+      - "attention"
+      - "cogutil"
+    function: "central_coordination"
+    activation_threshold: 0.7
+    connections:
+      - "frontal_cortex"
+      - "temporal_lobe" 
+      - "parietal_lobe"
+      - "occipital_lobe"
+      - "hippocampus"
+      - "brain_stem"
+
+  frontal_cortex:
+    primary_system: "pln"
+    components:
+      - "ure"
+      - "moses" 
+      - "miner"
+      - "opencog"
+    function: "executive_control"
+    activation_threshold: 0.8
+    connections:
+      - "thalamus"
+      - "hippocampus"
+      - "temporal_lobe"
+      - "parietal_lobe"
+
+  temporal_lobe:
+    primary_system: "learn"
+    components:
+      - "lg-atomese"
+      - "relex"
+      - "link-grammar"
+      - "language-learning"
+    function: "memory_language"
+    activation_threshold: 0.6
+    connections:
+      - "thalamus"
+      - "frontal_cortex"
+      - "hippocampus"
+      - "occipital_lobe"
+
+  parietal_lobe:
+    primary_system: "perception"
+    components:
+      - "pi_vision"
+      - "blender_api"
+      - "robots_config"
+      - "ros-behavior-scripting"
+    function: "spatial_sensory"
+    activation_threshold: 0.5
+    connections:
+      - "thalamus"
+      - "frontal_cortex"
+      - "occipital_lobe"
+      - "hippocampus"
+      - "cerebellum"
+
+  occipital_lobe:
+    primary_system: "destin"
+    components:
+      - "python-destin"
+      - "perception"
+      - "pi_vision"
+    function: "visual_processing"
+    activation_threshold: 0.6
+    connections:
+      - "thalamus"
+      - "parietal_lobe"
+      - "temporal_lobe"
+
+  hippocampus:
+    primary_system: "atomspace"
+    components:
+      - "atomspace-rocks"
+      - "atomspace-cog"
+      - "learn"
+    function: "memory_formation"
+    activation_threshold: 0.7
+    connections:
+      - "thalamus"
+      - "frontal_cortex"
+      - "temporal_lobe"
+      - "parietal_lobe"
+
+  cerebellum:
+    primary_system: "pau2motors"
+    components:
+      - "blender_api"
+      - "robots_config"
+      - "ros-behavior-scripting"
+    function: "motor_control"
+    activation_threshold: 0.5
+    connections:
+      - "brain_stem"
+      - "frontal_cortex"
+      - "parietal_lobe"
+
+  brain_stem:
+    primary_system: "openpsi"
+    components:
+      - "opencog/openpsi"
+      - "ros-behavior-scripting/sensors"
+      - "cogserver"
+    function: "basic_drives"
+    activation_threshold: 0.4
+    connections:
+      - "thalamus"
+      - "cerebellum"
+
+echo_integrations:
+  deep_tree_echo:
+    location: "3p/aphroditecho"
+    components:
+      - "echo.self"
+      - "echo.dash"
+      - "echo.kern"
+      - "echo.rkwv"
+    meta_cognitive_overlay: true
+    distributed_processing: true
+
+  neural_symbolic_bridge:
+    components:
+      - "nn"
+      - "llm-c"
+      - "rwkv-cpp"
+      - "kobold-cpp"
+    integration_type: "bidirectional"
+    processing_mode: "hybrid"
+
+connection_pathways:
+  primary:
+    thalamic_coordination:
+      - ["thalamus", "frontal_cortex", 0.9]
+      - ["thalamus", "temporal_lobe", 0.8]
+      - ["thalamus", "parietal_lobe", 0.7]
+      - ["thalamus", "occipital_lobe", 0.6]
+      - ["thalamus", "hippocampus", 0.8]
+      - ["thalamus", "brain_stem", 0.7]
+
+    executive_control:
+      - ["frontal_cortex", "hippocampus", 0.8]
+      - ["frontal_cortex", "temporal_lobe", 0.7]
+      - ["frontal_cortex", "parietal_lobe", 0.6]
+
+    motor_coordination:
+      - ["brain_stem", "cerebellum", 0.9]
+
+  secondary:
+    cross_modal:
+      - ["parietal_lobe", "occipital_lobe", 0.6]
+      - ["temporal_lobe", "occipital_lobe", 0.5]
+      - ["frontal_cortex", "cerebellum", 0.4]
+      - ["hippocampus", "parietal_lobe", 0.5]
+      - ["cerebellum", "parietal_lobe", 0.4]
+
+system_parameters:
+  update_frequency: 10  # Hz
+  connection_decay: 0.99
+  activation_spread: 0.1
+  attention_threshold: 0.6
+  memory_consolidation_rate: 0.05
+
+monitoring:
+  enabled: true
+  log_level: "INFO"
+  metrics_collection: true
+  health_check_interval: 30  # seconds
+  
+ports:
+  cogserver: 17001
+  rest_api: 5000
+  monitoring_dashboard: 8080
+  brain_region_coordinator: 9000
